@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Server", "PsiCat-Server\PsiCat-Server.csproj", "{8F3861A7-1B9E-4014-92C2-C3FB976A0215}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat", "PsiCat\PsiCat.csproj", "{2D67E919-B901-4FDF-B4B5-35A15F1BD113}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Tests", "PsiCat-Tests\PsiCat-Tests.csproj", "{35BF8764-8846-4538-8F51-CC66E4540541}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F3861A7-1B9E-4014-92C2-C3FB976A0215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F3861A7-1B9E-4014-92C2-C3FB976A0215}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F3861A7-1B9E-4014-92C2-C3FB976A0215}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F3861A7-1B9E-4014-92C2-C3FB976A0215}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D67E919-B901-4FDF-B4B5-35A15F1BD113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D67E919-B901-4FDF-B4B5-35A15F1BD113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D67E919-B901-4FDF-B4B5-35A15F1BD113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D67E919-B901-4FDF-B4B5-35A15F1BD113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35BF8764-8846-4538-8F51-CC66E4540541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35BF8764-8846-4538-8F51-CC66E4540541}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35BF8764-8846-4538-8F51-CC66E4540541}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35BF8764-8846-4538-8F51-CC66E4540541}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
