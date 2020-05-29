@@ -41,11 +41,14 @@ namespace PsiCat.Jira
         }
         
 
-        public async Task<HttpResponseMessage> Get(string endpoint, NameValueCollection queryParameters)
+        public async Task<HttpResponseMessage> Get(
+            string endpoint, 
+            NameValueCollection queryParameters = null)
         {
+            /* TODO
             NameValueCollection queryString = HttpUtility.ParseQueryString(string.Empty);
-            
             StringBuilder encodedParameters = new StringBuilder();
+            */
             
             
             HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);

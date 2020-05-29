@@ -1,6 +1,7 @@
 namespace PsiCat.Jira
 {
     using System.Collections.Generic;
+    using System.Text;
 
 
     /// <summary>
@@ -9,27 +10,32 @@ namespace PsiCat.Jira
     public class Jql
     {
         private readonly string separator = " ";
-        private readonly List<string> terms = new List<string>();
+        private readonly StringBuilder terms = new StringBuilder();
 
 
-        public Jql And()
+        public Jql Or
         {
-            this.terms.Add("AND");
-            return this;
-        }
-
-
-        public Jql And(params Jql[] jqlQueries)
-        {
-            
+            get { 
+                this.terms.Append(" OR ");
+                return this;
+            }
         }
         
+        public Jql And
+        {
+            get
+            {
+                this.terms.Append(" AND ");
+                return this;
+            }
+        }
+
 
         public Jql Project
         {
             get
             {
-                this.terms.Add("project");
+                this.terms.Append("project");
                 return this;
             }
         }
@@ -39,7 +45,7 @@ namespace PsiCat.Jira
         {
             get
             {
-                this.terms.Add("fixVersion");
+                this.terms.Append("fixVersion");
                 return this;
             }
         }
@@ -49,7 +55,7 @@ namespace PsiCat.Jira
         {
             get
             {
-                this.terms.Add("status");
+                this.terms.Append("status");
                 return this;
             }
         }
@@ -59,7 +65,7 @@ namespace PsiCat.Jira
         {
             get
             {
-                this.terms.Add("created");
+                this.terms.Append("created");
                 return this;
             }
         }
@@ -69,7 +75,7 @@ namespace PsiCat.Jira
         {
             get
             {
-                this.terms.Add("assignee");
+                this.terms.Append("assignee");
                 return this;
             }
         }
@@ -79,7 +85,7 @@ namespace PsiCat.Jira
         {
             get
             {
-                this.terms.Add("type");
+                this.terms.Append("type");
                 return this;
             }
         }
@@ -89,7 +95,7 @@ namespace PsiCat.Jira
         {
             get
             {
-                this.terms.Add("issueType");
+                this.terms.Append("issueType");
                 return this;
             }
         }
@@ -99,7 +105,7 @@ namespace PsiCat.Jira
         {
             get
             {
-                this.terms.Add("issue");
+                this.terms.Append("issue");
                 return this;
             }
         }
@@ -107,28 +113,28 @@ namespace PsiCat.Jira
 
         public Jql EqualTo(string value)
         {
-            this.terms.Add($"={Escape(value)}");
+            this.terms.Append($"={Escape(value)}");
             return this;
         }
 
 
         public Jql NotEqualTo(string value)
         {
-            this.terms.Add($"!={Escape(value)}");
+            this.terms.Append($"!={Escape(value)}");
             return this;
         }
 
 
         public Jql GreaterThan(object value)
         {
-            this.terms.Add($">{Escape(value.ToString())}");
+            this.terms.Append($">{Escape(value.ToString())}");
             return this;
         }
 
 
         public Jql LessThan(object value)
         {
-            this.terms.Add($"<{Escape(value.ToString())}");
+            this.terms.Append($"<{Escape(value.ToString())}");
             return this;
         }
 
@@ -145,8 +151,9 @@ namespace PsiCat.Jira
         /// <returns>JQL statement string.</returns>
         public override string ToString()
         {
-            string final = $"({string.Join($" {this.separator} ", this.terms)})";
-            return final;
+            //string final = $"({string.Join($"{this.separator}", this.terms)})";
+            //return final;
+            return this.terms.ToString();
         }
 
 
