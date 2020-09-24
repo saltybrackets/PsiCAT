@@ -55,18 +55,20 @@ namespace PsiCat.SmartDevices
 		public static void PingAll()
 		{
 
-			string gateIP = GetNetworkGateway();
+			string gatewayIP = GetNetworkGateway();
            
 			//Extracting and pinging all other ip's.
-			string[] array = gateIP.Split('.');
+			string[] array = gatewayIP.Split('.');
 
 			for (int i = 2; i <= 255; i++)
-			{  
-                
-				string ping_var = array[0] + "." + array[1] + "." + array[2] + "." + i;   
+			{
+				string ip = array[0] + "." + array[1] + "." + array[2] + "." + i;   
 
 				//time in milliseconds           
-				Ping(ping_var, 4, 4000);
+				Ping(
+					host: ip, 
+					attempts: 4, 
+					timeout: 40000);
 
 			}          
             

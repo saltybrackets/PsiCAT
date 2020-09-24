@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks> netstandard2.0; net45; net46; net47;</TargetFrameworks>
+    <Authors>Romain ODDONE</Authors>
+    <Company>Romain ODDONE</Company>
+    <Version>1.9.0</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/roddone/YeelightAPI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/roddone/YeelightAPI</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageTags>xiaomi yeelight api bulb device iot .net c#</PackageTags>
+    <PackageReleaseNotes>* Add support for music mode
+</PackageReleaseNotes>
+    <Description>Xiaomi yeelight smart-devices manager</Description>
+    <Copyright>Copyright © Romain ODDONE 2020</Copyright>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="README.txt" Pack="true" PackagePath="." />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
