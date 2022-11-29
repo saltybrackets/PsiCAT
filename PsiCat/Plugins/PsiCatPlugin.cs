@@ -4,14 +4,13 @@ namespace PsiCat.Plugins
     {
         public abstract PluginHost PluginHost { get; set; }
 
-        public abstract Config Config { get; }
+        public ILogger Logger { get; set; }
         public abstract string Name { get; }
         public abstract string Description { get; }
         public abstract string Author { get; }
         public abstract string Version { get; }
 
-        
-        
+
         public abstract void OnStart();
 
 
@@ -21,6 +20,11 @@ namespace PsiCat.Plugins
 
 
         public virtual void OnClose()
+        {
+        }
+
+
+        public virtual void OnUpdate()
         {
         }
     }

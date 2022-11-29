@@ -3,7 +3,6 @@ namespace PsiCat
     using System;
     using System.IO;
     using System.Reflection;
-    using PsiCat.Jira;
     using PsiCat.Plugins;
 
 
@@ -12,6 +11,14 @@ namespace PsiCat
     /// </summary>
     public class PsiCatClient
     {
+        public static readonly string PluginsPath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}"
+                                                    + "";
+
+        /// <summary>
+        /// Logger that will be used across plugin host and child plugins.
+        /// </summary>
+        public ILogger Logger;
+        
         /// <summary>
         /// Main PsiCAT and plugins config.
         /// </summary>
@@ -27,31 +34,16 @@ namespace PsiCat
         /// </summary>
         public CommandHost Commands;
 
-        private JiraRestClient jiraRestClient;
-
-
-        /// <summary>
-        /// Main Jira client, using values from Core.Config.
-        /// </summary>
-        public JiraRestClient JiraRest
-        {
-            get
-            {
-                if (jiraRestClient == null)
-                    jiraRestClient = new JiraRestClient(Config.Jira);
-                return jiraRestClient;
-            }
-            set { jiraRestClient = value; }
-        }
-
 
         /// <summary>
         /// Indicates when all components are loaded, and plugins may begin working.
         /// </summary>
         public void Start()
         {
-            foreach (PsiCatPlugin plugin in Plugins)
+            foreach (PsiCatPlugin plugin in this.Plugins.Collection)
+            {
                 plugin.OnStart();
+            }
         }
 
 
@@ -66,12 +58,13 @@ namespace PsiCat
             
             if (File.Exists(path))
             {
-                Config = PsiCat.Config.LoadFromJson<PsiCatConfig>(path);
+                LogWarning($"Creating new config at: {path}");
+                this.Config = PsiCat.Config.LoadFromJson<PsiCatConfig>(path);
             }
             else
             {
-                Config = new PsiCatConfig();
-                Config.Save(path);
+                this.Config = new PsiCatConfig();
+                this.Config.Save(path);
             }
         }
 
@@ -81,9 +74,9 @@ namespace PsiCat
         /// </summary>
         public void LoadInternalCommands()
         {
-            Commands = new CommandHost();
+            this.Commands = new CommandHost();
             Assembly internalAssembly = Assembly.GetCallingAssembly();
-            Commands.LocateCommands(internalAssembly);
+            this.Commands.LocateCommands(internalAssembly);
         }
 
 
@@ -93,18 +86,26 @@ namespace PsiCat
         /// </summary>
         public void LoadPlugins()
         {
-            Plugins = new PluginHost();
+            LogInfo($"Loading plugins at: {PluginsPath}...");
+            
+            this.Plugins = new PluginHost();
+            this.Plugins.Logger = this.Logger;
 
-            if (Directory.Exists(Config.PluginsPath))
+            if (Directory.Exists(PluginsPath))
             {
-                Console.Out.WriteLine(Directory.GetCurrentDirectory());
-                Plugins.LocatePlugins(Config.PluginsPath, Commands);
-                foreach (PsiCatPlugin plugin in Plugins)
+                this.Plugins.LocatePlugins(PluginsPath, this.Commands);
+                foreach (PsiCatPlugin plugin in this.Plugins.Collection)
+                {
+                    LogInfo($"Initializing plugin: {plugin.Name}");
+                    plugin.Logger = this.Logger;
+                    plugin.PluginHost = this.Plugins;
                     plugin.OnInitialize();
+                }
             }
             else
             {
-                Directory.CreateDirectory(Config.PluginsPath);
+                LogWarning($"Creating new plugins directory at: {PluginsPath}");
+                Directory.CreateDirectory(PluginsPath);
             }
         }
 
@@ -114,8 +115,44 @@ namespace PsiCat
         /// </summary>
         public void Close()
         {
-            foreach (PsiCatPlugin plugin in Plugins)
+            foreach (PsiCatPlugin plugin in this.Plugins.Collection)
+            {
                 plugin.OnClose();
+            }
+        }
+
+
+        public void Update()
+        {
+            foreach (PsiCatPlugin plugin in this.Plugins.Collection)
+            {
+                plugin.OnUpdate();
+            }
+        }
+
+
+        public void LogInfo(string message)
+        {
+            if (this.Logger != null)
+                this.Logger.LogInfo(message);
+        }
+        
+        public void LogWarning(string message)
+        {
+            if (this.Logger != null)
+                this.Logger.LogWarning(message);
+        }
+        
+        public void LogError(string message)
+        {
+            if (this.Logger != null)
+                this.Logger.LogError(message);
+        }
+        
+        public void Log(string message)
+        {
+            if (this.Logger != null)
+                this.Logger.Log(message);
         }
     }
 }

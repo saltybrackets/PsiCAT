@@ -2,9 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat", "PsiCat\PsiCat.csproj", "{2D67E919-B901-4FDF-B4B5-35A15F1BD113}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Tests", "PsiCat-Tests\PsiCat-Tests.csproj", "{35BF8764-8846-4538-8F51-CC66E4540541}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-SmartDevices", "PsiCat-SmartDevices\PsiCat-SmartDevices.csproj", "{966F6EC7-9F49-4C04-882E-4556AE5334A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Jira", "PsiCat-Jira\PsiCat-Jira.csproj", "{35251545-18BD-46DC-961E-7CD674F12A55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Home", "PsiCat-Home\PsiCat-Home.csproj", "{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,13 +18,17 @@ Global
 		{2D67E919-B901-4FDF-B4B5-35A15F1BD113}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D67E919-B901-4FDF-B4B5-35A15F1BD113}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D67E919-B901-4FDF-B4B5-35A15F1BD113}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35BF8764-8846-4538-8F51-CC66E4540541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35BF8764-8846-4538-8F51-CC66E4540541}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35BF8764-8846-4538-8F51-CC66E4540541}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35BF8764-8846-4538-8F51-CC66E4540541}.Release|Any CPU.Build.0 = Release|Any CPU
 		{966F6EC7-9F49-4C04-882E-4556AE5334A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{966F6EC7-9F49-4C04-882E-4556AE5334A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{966F6EC7-9F49-4C04-882E-4556AE5334A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{966F6EC7-9F49-4C04-882E-4556AE5334A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35251545-18BD-46DC-961E-7CD674F12A55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35251545-18BD-46DC-961E-7CD674F12A55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35251545-18BD-46DC-961E-7CD674F12A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35251545-18BD-46DC-961E-7CD674F12A55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

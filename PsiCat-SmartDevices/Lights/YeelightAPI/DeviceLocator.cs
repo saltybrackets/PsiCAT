@@ -242,14 +242,14 @@ namespace YeelightAPI
         #region Async API Methods
 
         /// <summary>
-        ///   Discover devices in LAN
+        /// Discover devices in LAN
         /// </summary>
         /// <returns></returns>
         public static async Task<IEnumerable<Device>> DiscoverAsync() =>
           await DeviceLocator.DiscoverAsync(deviceFoundReporter: null);
 
         /// <summary>
-        ///   Discover devices in LAN
+        /// Discover devices in LAN
         /// </summary>
         /// <returns></returns>
         public static async Task<IEnumerable<Device>> DiscoverAsync(IProgress<Device> deviceFoundReporter)
@@ -267,7 +267,7 @@ namespace YeelightAPI
         }
 
         /// <summary>
-        ///   Discover devices in a specific Network Interface
+        /// Discover devices in a specific Network Interface
         /// </summary>
         /// <param name="networkInterface"></param>
         /// <returns></returns>
@@ -275,7 +275,7 @@ namespace YeelightAPI
           await DeviceLocator.DiscoverAsync(networkInterface, null);
 
         /// <summary>
-        ///   Discover devices in a specific Network Interface
+        /// Discover devices in a specific Network Interface
         /// </summary>
         /// <param name="networkInterface"></param>
         /// <param name="deviceFoundReporter"></param>
@@ -309,7 +309,7 @@ namespace YeelightAPI
         }
 
         /// <summary>
-        ///   Create Discovery tasks for a specific Network Interface
+        /// Create Discovery tasks for a specific Network Interface
         /// </summary>
         /// <param name="netInterface"></param>
         /// <param name="deviceFoundCallback"></param>

@@ -1,7 +1,6 @@
 namespace PsiCat.Plugins
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
@@ -10,7 +9,7 @@ namespace PsiCat.Plugins
     /// <summary>
     /// Manages a collection of plugins and syncs them with PsiCAT context.
     /// </summary>
-    public class PluginHost : IEnumerable<PsiCatPlugin>
+    public class PluginHost
     {
         private Dictionary<string, PsiCatPlugin> pluginCollection;
 
@@ -19,25 +18,16 @@ namespace PsiCat.Plugins
         {
             this.pluginCollection = new Dictionary<string, PsiCatPlugin>();
         }
+        
+        
+        public ILogger Logger { get; set; }
 
-
-        public PsiCatPlugin this[string key]
+        
+        public Dictionary<string, PsiCatPlugin>.ValueCollection Collection
         {
-            get { return GetPlugin(key); }
+            get { return this.pluginCollection.Values; }
         }
-
-
-        public IEnumerator<PsiCatPlugin> GetEnumerator()
-        {
-            return this.pluginCollection.Values.GetEnumerator();
-        }
-
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
+        
 
         public PsiCatPlugin GetPlugin(string key)
         {
@@ -48,17 +38,18 @@ namespace PsiCat.Plugins
         /// <summary>
         /// Find all DLL's in specified directory and load available plugins.
         /// </summary>
-        /// <param name="pluginsPath">Path containing plugin DLL's.</param>
-        public void LocatePlugins(string path, CommandHost commandHost = null)
+        /// <param name="path">Path containing plugin DLL's.</param>
+        /// <param name="commandHost">ComandHost that will house plugins Commands.</param>
+        public void LocatePlugins(string path, CommandHost commandHost)
         {
-            // logger.Info("Loading plugins...");
             this.pluginCollection.Clear();
 
             foreach (string file in Directory.GetFiles(path))
             {
                 FileInfo fileInfo = new FileInfo(file);
 
-                if (fileInfo.Extension.Equals(".dll"))
+                if (fileInfo.Extension.ToLower().Equals(".dll"))
+                {
                     // Add any plugins from file if it contains a valid assembly.
                     try
                     {
@@ -72,8 +63,10 @@ namespace PsiCat.Plugins
                     }
                     catch (ReflectionTypeLoadException e)
                     {
-                        // logger.Warning("Tried to load {0}, but wasn't a plugin assembly.", fileInfo.Name);
+                        if (this.Logger != null)
+                            this.Logger.LogWarning($"Tried to load {fileInfo.Name}, but wasn't a plugin assembly.");
                     }
+                }
             }
         }
 
@@ -99,15 +92,17 @@ namespace PsiCat.Plugins
                 // Add the instance to the plugin collection if it's not a dupe.
                 if (!this.pluginCollection.ContainsKey(newPlugin.Name))
                 {
+                    if (this.Logger != null)
+                        this.Logger.LogInfo($"Found PsiCAT Plugin: {newPlugin.Name}.");
+                    
                     foundPlugins = true;
-                    // logger.Info("Adding {0} to plugin collection.", newPlugin.Name);
                     newPlugin.PluginHost = this;
                     this.pluginCollection.Add(newPlugin.Name, newPlugin);
-                    
                 }
                 else
                 {
-                    // logger.Warning("Tried to add duplicate {0} plugin to collection.", newPlugin.Name);
+                    if (this.Logger != null)
+                        this.Logger.LogWarning($"Ignored duplicate plugin: {newPlugin.Name}.");
                 }
             }
             

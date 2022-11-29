@@ -131,6 +131,7 @@ namespace YeelightAPI
 
         /// <summary>
         /// Set the brightness for all the devices
+        /// Between 1 and 100.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="smooth"></param>
@@ -145,6 +146,7 @@ namespace YeelightAPI
 
         /// <summary>
         /// Set the color temperature for all the devices
+        /// Between 0 and 6500.
         /// </summary>
         /// <param name="temperature"></param>
         /// <param name="smooth"></param>

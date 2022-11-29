@@ -19,27 +19,7 @@
 
 		private static async Task Main(string[] args)
 		{
-			//NetworkDiscovery.PingAll();
-
-
-			DeviceLocator.UseAllAvailableMulticastAddresses = true;
-			IEnumerable<Device> lights = await DeviceLocator.DiscoverAsync();
-
-			if (lights.Count() < 1)
-			{
-				Console.Out.WriteLine("No lights found.");
-				return;
-			}
-			
-			DeviceGroup deviceGroup = new DeviceGroup();
-			foreach (Device light in lights)
-			{
-				Console.Out.WriteLine($"Found Light: {light.Model} on {light.Hostname}");
-				deviceGroup.Add(light);
-			}
-			
-			Console.Out.WriteLine($"Found {deviceGroup.Count} lights.");
-			
+			/*
 			//YeelightAPI.Device device = new Device(IP);
 			await deviceGroup.Connect();
 			await deviceGroup.SetRGBColor(255, 255, 255);
@@ -73,7 +53,7 @@
 				Thread.Sleep(40);
 			}
 			while (input.Key != ConsoleKey.Escape);
-			
+			*/
 		}
 	}
 }
