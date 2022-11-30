@@ -1,6 +1,8 @@
 namespace PsiCat.SmartDevices
 {
     using System;
+    using System.IO;
+    using System.Reflection;
     using System.Threading.Tasks;
     using PsiCat.Plugins;
 
@@ -17,7 +19,7 @@ namespace PsiCat.SmartDevices
         }
 
 
-        public Config Config { get; private set; } // TODO
+        public SmartDevicesConfig Config { get; private set; } // TODO
 
 
         public override string Description
@@ -45,20 +47,44 @@ namespace PsiCat.SmartDevices
         #endregion
 
 
-        public override void OnStart()
+        public override async void OnStart()
         {
-            this.Config = null;
+            LoadConfig();
 
-            Devices devices = new Devices();
-            devices.Logger = this.Logger;
+            SmartLights smartLights = new SmartLights();
+            smartLights.Logger = this.Logger;
             
-            Task locateTask = devices.LocateAll();
+            await smartLights.LocateAll(this.Config);
+            
+            this.Config.Save(SmartDevicesConfig.DefaultFilePath);
         }
 
 
         public override void OnUpdate()
         {
             // TODO
+        }
+        
+        
+        /// <summary>
+        /// Load in main config file.
+        /// If no config file found, a new one will be created.
+        /// </summary>
+        public void LoadConfig(string path = null)
+        {
+            if (string.IsNullOrEmpty(path))
+                path = SmartDevicesConfig.DefaultFilePath;
+            
+            if (File.Exists(path))
+            {
+                this.Config = PsiCat.Config.LoadFromJson<SmartDevicesConfig>(path);
+            }
+            else
+            {
+                this.Logger.LogWarning($"Creating new config at: {path}");
+                this.Config = new SmartDevicesConfig();
+                this.Config.Save(path);
+            }
         }
     }
 }

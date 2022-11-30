@@ -11,8 +11,7 @@ namespace PsiCat
     /// </summary>
     public class PsiCatClient
     {
-        public static readonly string PluginsPath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}"
-                                                    + "";
+        public static readonly string PluginsPath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}";
 
         /// <summary>
         /// Logger that will be used across plugin host and child plugins.
@@ -58,11 +57,11 @@ namespace PsiCat
             
             if (File.Exists(path))
             {
-                LogWarning($"Creating new config at: {path}");
                 this.Config = PsiCat.Config.LoadFromJson<PsiCatConfig>(path);
             }
             else
             {
+                LogWarning($"Creating new config at: {path}");
                 this.Config = new PsiCatConfig();
                 this.Config.Save(path);
             }

@@ -14,7 +14,7 @@ namespace YeelightAPI
     /// <summary>
     /// Yeelight Device
     /// </summary>
-    public partial class Device : IDisposable
+    public partial class YeelightDevice : IDisposable
     {
         #region PRIVATE ATTRIBUTES
 
@@ -121,7 +121,7 @@ namespace YeelightAPI
         /// <param name="hostname"></param>
         /// <param name="port"></param>
         /// <param name="autoConnect"></param>
-        public Device(string hostname, int port = Constants.DefaultPort, bool autoConnect = false)
+        public YeelightDevice(string hostname, int port = Constants.DefaultPort, bool autoConnect = false)
         {
             Hostname = hostname;
             Port = port;
@@ -133,7 +133,7 @@ namespace YeelightAPI
             }
         }
 
-        internal Device(string hostname, int port, string id, MODEL model, string firmwareVersion, Dictionary<string, object> properties, List<METHODS> supportedOperations)
+        internal YeelightDevice(string hostname, int port, string id, MODEL model, string firmwareVersion, Dictionary<string, object> properties, List<METHODS> supportedOperations)
         {
             Hostname = hostname;
             Port = port;
@@ -588,7 +588,7 @@ namespace YeelightAPI
         }
 
         /// <inheritdoc />
-        ~Device()
+        ~YeelightDevice()
         {
             Dispose(false);
         }

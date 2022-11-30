@@ -12,7 +12,7 @@ namespace YeelightAPI
     /// <summary>
     /// Yeelight Device : IBackgroundDeviceController implementation
     /// </summary>
-    public partial class Device : IBackgroundDeviceController
+    public partial class YeelightDevice : IBackgroundDeviceController
     {
         #region Public Methods
 

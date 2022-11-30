@@ -11,7 +11,7 @@ namespace YeelightAPI
     /// <summary>
     /// Yeelight Device : IDeviceReader implementation
     /// </summary>
-    public partial class Device : IDeviceReader
+    public partial class YeelightDevice : IDeviceReader
     {
         #region Public Methods
 

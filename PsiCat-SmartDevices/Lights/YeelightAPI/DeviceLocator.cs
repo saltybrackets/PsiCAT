@@ -88,11 +88,11 @@ namespace YeelightAPI
         /// <param name="preferredInterface"></param>
         /// <returns></returns>
         [Obsolete("Deprecated. Use DiscoverAsync and overloads instead.")]
-        public static async Task<List<Device>> Discover(NetworkInterface preferredInterface)
+        public static async Task<List<YeelightDevice>> Discover(NetworkInterface preferredInterface)
         {
-            List<Task<List<Device>>> tasks = DeviceLocator.CreateDiscoverTasks(preferredInterface, DeviceLocator.MaxRetryCount);
+            List<Task<List<YeelightDevice>>> tasks = DeviceLocator.CreateDiscoverTasks(preferredInterface, DeviceLocator.MaxRetryCount);
 
-            List<Device>[] result = await Task.WhenAll(tasks);
+            List<YeelightDevice>[] result = await Task.WhenAll(tasks);
             return result
               .SelectMany(devices => devices)
               .GroupBy(d => d.Hostname)
@@ -105,9 +105,9 @@ namespace YeelightAPI
         /// </summary>
         /// <returns></returns>
         [Obsolete("Deprecated. Use DiscoverAsync and overloads instead.")]
-        public static async Task<List<Device>> Discover()
+        public static async Task<List<YeelightDevice>> Discover()
         {
-            var tasks = new List<Task<List<Device>>>();
+            var tasks = new List<Task<List<YeelightDevice>>>();
             int retryCount = DeviceLocator.MaxRetryCount;
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces()
               .Where(n => n.OperationalStatus == OperationalStatus.Up))
@@ -116,7 +116,7 @@ namespace YeelightAPI
             }
 
 
-            List<Device>[] result = await Task.WhenAll(tasks);
+            List<YeelightDevice>[] result = await Task.WhenAll(tasks);
             return result
               .SelectMany(devices => devices)
               .GroupBy(d => d.Hostname)
@@ -135,10 +135,10 @@ namespace YeelightAPI
         /// <param name="retryCount">Number of retries when lookup fails.</param>
         /// <returns></returns>
         [Obsolete("Deprecated. Use SearchNetworkForDevicesAsync instead")]
-        private static List<Task<List<Device>>> CreateDiscoverTasks(NetworkInterface netInterface, int retryCount)
+        private static List<Task<List<YeelightDevice>>> CreateDiscoverTasks(NetworkInterface netInterface, int retryCount)
         {
-            var devices = new ConcurrentDictionary<string, Device>();
-            var tasks = new List<Task<List<Device>>>();
+            var devices = new ConcurrentDictionary<string, YeelightDevice>();
+            var tasks = new List<Task<List<YeelightDevice>>>();
 
             if (netInterface.NetworkInterfaceType != NetworkInterfaceType.Wireless80211 &&
                 netInterface.NetworkInterfaceType != NetworkInterfaceType.Ethernet)
@@ -155,7 +155,7 @@ namespace YeelightAPI
 
                 for (var count = 0; count < retryCount; count++)
                 {
-                    Task<List<Device>> t = Task.Run(
+                    Task<List<YeelightDevice>> t = Task.Run(
                       async () =>
                       {
                           var stopWatch = new Stopwatch();
@@ -195,12 +195,12 @@ namespace YeelightAPI
                                               if (i > 0)
                                               {
                                                   string response = Encoding.UTF8.GetString(buffer.Take(i).ToArray());
-                                                  Device device = DeviceLocator.GetDeviceInformationFromSsdpMessage(response);
+                                                  YeelightDevice yeelightDevice = DeviceLocator.GetDeviceInformationFromSsdpMessage(response);
 
                                                   //add only if no device already matching
-                                                  if (devices.TryAdd(device.Hostname, device))
+                                                  if (devices.TryAdd(yeelightDevice.Hostname, yeelightDevice))
                                                   {
-                                                      DeviceLocator.OnDeviceFound?.Invoke(null, new DeviceFoundEventArgs(device));
+                                                      DeviceLocator.OnDeviceFound?.Invoke(null, new DeviceFoundEventArgs(yeelightDevice));
                                                   }
                                               }
                                           }
@@ -245,20 +245,20 @@ namespace YeelightAPI
         /// Discover devices in LAN
         /// </summary>
         /// <returns></returns>
-        public static async Task<IEnumerable<Device>> DiscoverAsync() =>
+        public static async Task<IEnumerable<YeelightDevice>> DiscoverAsync() =>
           await DeviceLocator.DiscoverAsync(deviceFoundReporter: null);
 
         /// <summary>
         /// Discover devices in LAN
         /// </summary>
         /// <returns></returns>
-        public static async Task<IEnumerable<Device>> DiscoverAsync(IProgress<Device> deviceFoundReporter)
+        public static async Task<IEnumerable<YeelightDevice>> DiscoverAsync(IProgress<YeelightDevice> deviceFoundReporter)
         {
-            IEnumerable<Task<IEnumerable<Device>>> tasks = NetworkInterface.GetAllNetworkInterfaces()
+            IEnumerable<Task<IEnumerable<YeelightDevice>>> tasks = NetworkInterface.GetAllNetworkInterfaces()
               .Where(networkInterface => networkInterface.OperationalStatus == OperationalStatus.Up)
               .Select(networkInterface => DeviceLocator.DiscoverAsync(networkInterface, deviceFoundReporter));
 
-            IEnumerable<Device>[] result = await Task.WhenAll(tasks);
+            IEnumerable<YeelightDevice>[] result = await Task.WhenAll(tasks);
             return result
               .SelectMany(devices => devices)
               .GroupBy(d => d.Hostname)
@@ -271,7 +271,7 @@ namespace YeelightAPI
         /// </summary>
         /// <param name="networkInterface"></param>
         /// <returns></returns>
-        public static async Task<IEnumerable<Device>> DiscoverAsync(NetworkInterface networkInterface) =>
+        public static async Task<IEnumerable<YeelightDevice>> DiscoverAsync(NetworkInterface networkInterface) =>
           await DeviceLocator.DiscoverAsync(networkInterface, null);
 
         /// <summary>
@@ -280,9 +280,9 @@ namespace YeelightAPI
         /// <param name="networkInterface"></param>
         /// <param name="deviceFoundReporter"></param>
         /// <returns></returns>
-        public static async Task<IEnumerable<Device>> DiscoverAsync(
+        public static async Task<IEnumerable<YeelightDevice>> DiscoverAsync(
           NetworkInterface networkInterface,
-          IProgress<Device> deviceFoundReporter) =>
+          IProgress<YeelightDevice> deviceFoundReporter) =>
           await DeviceLocator.SearchNetworkForDevicesAsync(networkInterface, deviceFoundReporter);
 
         #endregion Async API Methods
@@ -314,7 +314,7 @@ namespace YeelightAPI
         /// <param name="netInterface"></param>
         /// <param name="deviceFoundCallback"></param>
         /// <returns></returns>
-        private static async Task<IEnumerable<Device>> SearchNetworkForDevicesAsync(NetworkInterface netInterface, IProgress<Device> deviceFoundCallback)
+        private static async Task<IEnumerable<YeelightDevice>> SearchNetworkForDevicesAsync(NetworkInterface netInterface, IProgress<YeelightDevice> deviceFoundCallback)
         {
             if (netInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
                 netInterface.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
@@ -331,13 +331,13 @@ namespace YeelightAPI
                     .ToList());
             }
 
-            return new List<Device>();
+            return new List<YeelightDevice>();
         }
 
-        private static IEnumerable<Device> CheckSocketForDevices(IEnumerable<MulticastIPAddressInformation> multicastIPAddresses, UnicastIPAddressInformation ip, IProgress<Device> deviceFoundCallback, int retryCount)
+        private static IEnumerable<YeelightDevice> CheckSocketForDevices(IEnumerable<MulticastIPAddressInformation> multicastIPAddresses, UnicastIPAddressInformation ip, IProgress<YeelightDevice> deviceFoundCallback, int retryCount)
         {
             // Use hash table for faster lookup, than List.Contains
-            var devices = new Dictionary<string, Device>();
+            var devices = new Dictionary<string, YeelightDevice>();
 
             for (int count = 0; count < retryCount; count++)
             {
@@ -375,7 +375,7 @@ namespace YeelightAPI
               new MulticastOption(multicastIPEndpoint.Address));
         }
 
-        private static void GetDevicesFromSocket(IPEndPoint multicastIPEndpoint, IProgress<Device> deviceFoundCallback, Socket ssdpSocket, Dictionary<string, Device> devices)
+        private static void GetDevicesFromSocket(IPEndPoint multicastIPEndpoint, IProgress<YeelightDevice> deviceFoundCallback, Socket ssdpSocket, Dictionary<string, YeelightDevice> devices)
         {
             ssdpSocket.SendTo(
                 Encoding.ASCII.GetBytes(string.Format(DeviceLocator._ssdpMessage, multicastIPEndpoint.Address)),
@@ -400,12 +400,12 @@ namespace YeelightAPI
                             if (numberOfBytesRead > 0)
                             {
                                 string response = Encoding.UTF8.GetString(buffer.Take(numberOfBytesRead).ToArray());
-                                Device device = DeviceLocator.GetDeviceInformationFromSsdpMessage(response);
+                                YeelightDevice yeelightDevice = DeviceLocator.GetDeviceInformationFromSsdpMessage(response);
 
-                                if (!devices.ContainsKey(device.Hostname))
+                                if (!devices.ContainsKey(yeelightDevice.Hostname))
                                 {
-                                    devices.Add(device.Hostname, device);
-                                    deviceFoundCallback?.Report(device);
+                                    devices.Add(yeelightDevice.Hostname, yeelightDevice);
+                                    deviceFoundCallback?.Report(yeelightDevice);
                                 }
                             }
                         }
@@ -429,7 +429,7 @@ namespace YeelightAPI
         /// </summary>
         /// <param name="ssdpMessage"></param>
         /// <returns></returns>
-        private static Device GetDeviceInformationFromSsdpMessage(string ssdpMessage)
+        private static YeelightDevice GetDeviceInformationFromSsdpMessage(string ssdpMessage)
         {
             if (ssdpMessage != null)
             {
@@ -500,7 +500,7 @@ namespace YeelightAPI
                     }
                 }
 
-                return new Device(host, port, id, model, firmwareVersion, properties, supportedMethods);
+                return new YeelightDevice(host, port, id, model, firmwareVersion, properties, supportedMethods);
             }
 
             return null;

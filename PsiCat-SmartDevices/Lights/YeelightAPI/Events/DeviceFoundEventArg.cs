@@ -14,7 +14,7 @@ namespace YeelightAPI.Events
         /// <summary>
         /// Notification Result
         /// </summary>
-        public Device Device { get; set; }
+        public YeelightDevice YeelightDevice { get; set; }
 
         #endregion Public Properties
 
@@ -28,10 +28,10 @@ namespace YeelightAPI.Events
         /// <summary>
         /// Constructor with notification result
         /// </summary>
-        /// <param name="device"></param>
-        public DeviceFoundEventArgs(Device device)
+        /// <param name="yeelightDevice"></param>
+        public DeviceFoundEventArgs(YeelightDevice yeelightDevice)
         {
-            Device = device;
+            this.YeelightDevice = yeelightDevice;
         }
 
         #endregion Public Constructors

@@ -68,7 +68,7 @@ namespace PsiCat.SmartDevices
 				Ping(
 					host: ip, 
 					attempts: 4, 
-					timeout: 40000);
+					timeout: 5000);
 
 			}          
             

@@ -15,7 +15,7 @@ namespace YeelightAPI
     /// <summary>
     /// Yeelight Device : IDeviceController implementation
     /// </summary>
-    public partial class Device : IDeviceController
+    public partial class YeelightDevice : IDeviceController
     {
         /// <summary>
         /// Adjusts the brightness

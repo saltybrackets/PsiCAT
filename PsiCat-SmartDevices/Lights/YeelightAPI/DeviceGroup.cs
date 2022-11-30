@@ -7,7 +7,7 @@ namespace YeelightAPI
     /// <summary>
     /// Group of Yeelight Devices
     /// </summary>
-    public partial class DeviceGroup : List<Device>, IDisposable
+    public partial class DeviceGroup : List<YeelightDevice>, IDisposable
     {
         #region PUBLIC PROPERTIES
 
@@ -32,11 +32,11 @@ namespace YeelightAPI
         /// <summary>
         /// Constructor with one device
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="yeelightDevice"></param>
         /// <param name="name"></param>
-        public DeviceGroup(Device device, string name = null)
+        public DeviceGroup(YeelightDevice yeelightDevice, string name = null)
         {
-            Add(device);
+            Add(yeelightDevice);
             Name = name;
         }
 
@@ -44,7 +44,7 @@ namespace YeelightAPI
         /// Constructor with devices as params
         /// </summary>
         /// <param name="devices"></param>
-        public DeviceGroup(params Device[] devices)
+        public DeviceGroup(params YeelightDevice[] devices)
         {
             AddRange(devices);
         }
@@ -54,7 +54,7 @@ namespace YeelightAPI
         /// </summary>
         /// <param name="devices"></param>
         /// <param name="name"></param>
-        public DeviceGroup(IEnumerable<Device> devices, string name = null)
+        public DeviceGroup(IEnumerable<YeelightDevice> devices, string name = null)
         {
             AddRange(devices);
             Name = name;
@@ -69,7 +69,7 @@ namespace YeelightAPI
         /// </summary>
         public void Dispose()
         {
-            foreach (Device device in this)
+            foreach (YeelightDevice device in this)
             {
                 device.Dispose();
             }
@@ -84,12 +84,12 @@ namespace YeelightAPI
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        protected async Task<bool> Process(Func<Device, Task<bool>> f)
+        protected async Task<bool> Process(Func<YeelightDevice, Task<bool>> f)
         {
             bool result = true;
             List<Task<bool>> tasks = new List<Task<bool>>();
 
-            foreach (Device device in this)
+            foreach (YeelightDevice device in this)
             {
                 tasks.Add(f(device));
             }
