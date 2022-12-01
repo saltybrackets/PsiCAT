@@ -1,0 +1,27 @@
+@page "/lights"
+@using PsiCat.SmartDevices
+@inject PsiCatClient Client
+
+<h3>Lights</h3>
+
+<ul>
+    @foreach (SmartDevice entry in Config.Devices)
+    {
+        <li>@entry.Name</li>
+    }
+    
+</ul>
+
+@code {
+
+    public SmartDevicesConfig Config
+    {
+        get
+        {
+            return Client
+                       .Plugins
+                       .GetPlugin("PsiCAT Smart Devices")
+                       .Config as SmartDevicesConfig;
+        }
+    }
+}

@@ -6,6 +6,8 @@ using PsiCat.Home;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//   AddSingleton for global services.
+//   AddScoped for user-specific services.
 /*
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
     .AddNegotiate();
@@ -17,13 +19,14 @@ builder.Services.AddAuthorization(
             options.FallbackPolicy = options.DefaultPolicy;
         });
 */
-
+PsiCatClient psiCatClient = new PsiCatClient();
+builder.Services.AddSingleton(psiCatClient);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 WebApplication app = builder.Build();
 
-PsiCatClient psiCatClient = new PsiCatClient();
+// Start PsiCAT
 psiCatClient.Logger = new MicrosoftLoggingAdapter(app.Logger);
 psiCatClient.LoadPlugins();
 psiCatClient.LoadConfig();

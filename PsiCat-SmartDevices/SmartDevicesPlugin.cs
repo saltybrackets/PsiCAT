@@ -9,17 +9,17 @@ namespace PsiCat.SmartDevices
 
     public class SmartDevicesPlugin : PsiCatPlugin
     {
-        #region Properties
+        
         public override string Author
         {
             get
             {
-                return "Zachary White (Primitive Concept)";
+                return "Wren White (Primitive Concept)";
             }
         }
 
 
-        public SmartDevicesConfig Config { get; private set; } // TODO
+        public override Config Config { get; set; } // TODO
 
 
         public override string Description
@@ -44,7 +44,7 @@ namespace PsiCat.SmartDevices
         {
             get { return "1.0.0"; }
         }
-        #endregion
+        
 
 
         public override async void OnStart()
@@ -54,7 +54,7 @@ namespace PsiCat.SmartDevices
             SmartLights smartLights = new SmartLights();
             smartLights.Logger = this.Logger;
             
-            await smartLights.LocateAll(this.Config);
+            await smartLights.LocateAll(this.Config as SmartDevicesConfig);
             
             this.Config.Save(SmartDevicesConfig.DefaultFilePath);
         }
