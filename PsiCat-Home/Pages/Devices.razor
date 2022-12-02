@@ -7,11 +7,17 @@
 
 <h5>Lights</h5>
 <div @onkeyup="() => FormUnchanged = false">
-    <ul>
+    <ul ondragover="event.preventDefault();">
         @foreach (SmartDevice light in configChanges.Devices
             .Where(device => device.Type == SmartDeviceType.Light))
         {
-            <li><input @bind="@light.Name" /> : @light.IP</li>
+            <li class="list-group-item"
+                draggable="true"
+                @key="light.IP"
+                @ondrag="@(() => Devices_DragStart(light))"
+                @ondrop="@(() => Devices_DragDrop(light))">
+                <input @bind="@light.Name"/> : @light.IP
+            </li>
         }
     </ul>    
 </div>
@@ -22,15 +28,10 @@
 
 @code {
     private SmartDevicesConfig configChanges;
-
+    private int currentDeviceIndex = 0;
+    
     private bool FormUnchanged { get; set; }
     
-    protected override void OnInitialized()
-    {
-        configChanges = PsiCat.Config.Clone(Config);
-        FormUnchanged = true;
-    }
-
     private SmartDevicesConfig Config
     {
         get
@@ -48,6 +49,13 @@
                 .Config = value;
         }
     }
+    
+    
+    protected override void OnInitialized()
+    {
+        configChanges = PsiCat.Config.Clone(Config);
+        FormUnchanged = true;
+    }
 
 
     private void SaveChanges()
@@ -56,5 +64,33 @@
         Config.Save();
         configChanges = PsiCat.Config.Clone(Config);
         FormUnchanged = true;
+    }
+
+    
+    private void Devices_DragStart(SmartDevice device)
+    {
+        this.currentDeviceIndex = GetDeviceIndex(device);
+    }
+
+
+    private void Devices_DragDrop(SmartDevice device)
+    {
+        if (device == null)
+            return;
+
+        int newIndex = GetDeviceIndex(device);
+        SmartDevice currentDevice = configChanges.Devices[this.currentDeviceIndex];
+        configChanges.Devices.RemoveAt(this.currentDeviceIndex);
+        configChanges.Devices.Insert(newIndex, currentDevice);
+        this.currentDeviceIndex = newIndex;
+        
+        FormUnchanged = false;
+        StateHasChanged();
+    }
+
+
+    private int GetDeviceIndex(SmartDevice device)
+    {
+        return configChanges.Devices.FindIndex(entry => entry.IP == device.IP);
     }
 }
