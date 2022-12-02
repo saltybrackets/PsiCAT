@@ -7,7 +7,11 @@
 @inject PsiCatClient Client
 
 <span>
-    @(SmartDevice != null ? SmartDevice.Name : "NULL") <input type="checkbox" @bind="@IsOn" />
+    @(SmartDevice != null ? SmartDevice.Name : "NULL") 
+    <input type="checkbox" 
+           @bind="@IsOn" 
+           @onclick="() => this.light.Toggle()"
+    />
 </span>
 
 @code
@@ -19,14 +23,17 @@
         set
         {
             this.smartDevice = value;
-            this.light = GetLight();
         }
     }
     
     public bool IsOn { get; private set; }
 
     private SmartDevice? smartDevice;
-    private YeelightDevice? light;
+
+    private YeelightDevice? light
+    {
+        get { return GetLight(); }
+    }
     
     private SmartLights SmartLights
     {

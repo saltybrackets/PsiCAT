@@ -34,6 +34,7 @@ namespace PsiCat.SmartDevices
             {
                 this.Logger.LogInfo($"Found Light: {light.Model} on {light.Hostname}");
                 this.Lights.Add(light.Hostname, light);
+                await light.Connect();
                 light.ApplyToConfig(config);
             }
 			

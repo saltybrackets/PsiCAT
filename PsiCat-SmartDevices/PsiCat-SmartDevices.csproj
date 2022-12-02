@@ -6,6 +6,7 @@
         <RootNamespace>PsiSmartLight</RootNamespace>
         <Company>Zachary White</Company>
         <Product>PsiCAT Smart Devices</Product>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
