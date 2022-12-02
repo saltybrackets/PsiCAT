@@ -45,16 +45,16 @@ namespace PsiCat.SmartDevices
             get { return "1.0.0"; }
         }
         
-
+        public SmartLights SmartLights { get; private set; }
 
         public override async void OnStart()
         {
             LoadConfig();
 
-            SmartLights smartLights = new SmartLights();
-            smartLights.Logger = this.Logger;
+            this.SmartLights = new SmartLights();
+            this.SmartLights.Logger = this.Logger;
             
-            await smartLights.LocateAll(this.Config as SmartDevicesConfig);
+            await this.SmartLights.LocateAll(this.Config as SmartDevicesConfig);
             
             this.Config.Save(SmartDevicesConfig.DefaultFilePath);
         }

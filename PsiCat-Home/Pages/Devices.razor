@@ -1,0 +1,60 @@
+@page "/devices"
+@using PsiCat.SmartDevices
+@using PsiCat.Plugins
+@inject PsiCatClient Client
+
+<h3>Devices</h3>
+
+<h5>Lights</h5>
+<div @onkeyup="() => FormUnchanged = false">
+    <ul>
+        @foreach (SmartDevice light in configChanges.Devices
+            .Where(device => device.Type == SmartDeviceType.Light))
+        {
+            <li><input @bind="@light.Name" /> : @light.IP</li>
+        }
+    </ul>    
+</div>
+
+<button @onclick="@SaveChanges" disabled="@FormUnchanged">Save Changes</button>
+
+
+
+@code {
+    private SmartDevicesConfig configChanges;
+
+    private bool FormUnchanged { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        configChanges = PsiCat.Config.Clone(Config);
+        FormUnchanged = true;
+    }
+
+    private SmartDevicesConfig Config
+    {
+        get
+        {
+            return (SmartDevicesConfig)Client
+                       .Plugins
+                       .GetPlugin("PsiCAT Smart Devices")
+                       .Config;
+        }
+        set
+        {
+            Client
+                .Plugins
+                .GetPlugin("PsiCAT Smart Devices")
+                .Config = value;
+        }
+    }
+
+
+    private void SaveChanges()
+    {
+        Config = configChanges;
+        Config.Save();
+        configChanges = PsiCat.Config.Clone(Config);
+        FormUnchanged = true;
+    }
+}

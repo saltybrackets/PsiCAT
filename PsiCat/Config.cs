@@ -1,9 +1,13 @@
 namespace PsiCat
 {
+    using System;
     using System.IO;
+    using System.Runtime.Serialization;
+    using System.Runtime.Serialization.Formatters.Binary;
     using Newtonsoft.Json;
 
 
+    [Serializable]
     public class Config
     {
         public static T LoadFromJson<T>(string filePath)
@@ -20,10 +24,18 @@ namespace PsiCat
         }
         
         
-        public void Save(string filePath)
+        public virtual void Save(string filePath = null)
         {
             string json = JsonConvert.SerializeObject(this, Formatting.Indented);
             File.WriteAllText(filePath, json);
+        }
+
+
+        public static T Clone<T>(T config)
+            where T: Config
+        {
+            string copy = JsonConvert.SerializeObject(config);
+            return JsonConvert.DeserializeObject<T>(copy);
         }
     }
 }

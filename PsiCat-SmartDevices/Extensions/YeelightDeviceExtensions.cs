@@ -2,7 +2,9 @@ namespace PsiCat.SmartDevices
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using YeelightAPI;
+    using YeelightAPI.Models;
 
 
     public static class YeelightDeviceExtensions
@@ -34,6 +36,16 @@ namespace PsiCat.SmartDevices
             {
                 config.Devices.Add(yeelightDevice.ToSmartDevice());
             }
+        }
+
+
+        public static async Task<bool> IsOn(this YeelightDevice yeelightDevice)
+        {
+            if (!yeelightDevice.IsConnected)
+                return false;
+            object powerProperty = await yeelightDevice.GetProp(PROPERTIES.power);
+            
+            return powerProperty.ToString() == "on";
         }
     }
 }

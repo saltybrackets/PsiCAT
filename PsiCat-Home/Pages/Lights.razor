@@ -1,27 +1,75 @@
 @page "/lights"
+@using System.Timers
 @using PsiCat.SmartDevices
 @inject PsiCatClient Client
 
 <h3>Lights</h3>
 
-<ul>
-    @foreach (SmartDevice entry in Config.Devices)
+<div>
+    <ul>
+        @foreach (SmartDevice light in Config.Devices
+            .Where(device => device.Type == SmartDeviceType.Light))
+        {
+            <li><Yeelight SmartDevice="light" @ref="@yeelightElement" /></li>
+        }
+    </ul>    
+</div>
+
+
+
+@code 
+{
+    private List<Yeelight?> Yeelights { get; set; } = new List<Yeelight?>();
+    private Timer timer = new Timer();
+    
+    private Yeelight? yeelightElement
     {
-        <li>@entry.Name</li>
+        set { Yeelights.Add(value); }
     }
     
-</ul>
-
-@code {
-
-    public SmartDevicesConfig Config
+    private SmartDevicesConfig Config
     {
         get
         {
-            return Client
-                       .Plugins
-                       .GetPlugin("PsiCAT Smart Devices")
-                       .Config as SmartDevicesConfig;
+            return (SmartDevicesConfig)Client
+                                           .Plugins
+                                           .GetPlugin("PsiCAT Smart Devices")
+                                           .Config;
         }
+    }
+
+    private SmartLights SmartLights
+    {
+        get
+        {
+            return ((SmartDevicesPlugin)Client
+                                            .Plugins
+                                            .GetPlugin("PsiCAT Smart Devices"))
+                .SmartLights;
+        }
+    }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer.Elapsed += PollState;
+            timer.Interval = 1000;
+            timer.AutoReset = true;
+            timer.Start();    
+        }
+        
+        base.OnAfterRender(firstRender);
+    }
+
+
+    private async void PollState(object? sender, ElapsedEventArgs e)
+    {
+        foreach (Yeelight? light in this.Yeelights)
+        {
+            if (light != null)
+                await light.UpdateState();
+        }
+        await InvokeAsync(StateHasChanged);
     }
 }

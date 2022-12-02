@@ -1,0 +1,59 @@
+@namespace PsiCat.Home.Components
+
+@using System.Timers
+@using PsiCat
+@using PsiCat.SmartDevices
+@using YeelightAPI
+@inject PsiCatClient Client
+
+<span>
+    @(SmartDevice != null ? SmartDevice.Name : "NULL") <input type="checkbox" @bind="@IsOn" />
+</span>
+
+@code
+{
+    [Parameter]
+    public SmartDevice? SmartDevice
+    {
+        get { return this.smartDevice; }
+        set
+        {
+            this.smartDevice = value;
+            this.light = GetLight();
+        }
+    }
+    
+    public bool IsOn { get; private set; }
+
+    private SmartDevice? smartDevice;
+    private YeelightDevice? light;
+    
+    private SmartLights SmartLights
+    {
+        get
+        {
+            return ((SmartDevicesPlugin)Client
+                                            .Plugins
+                                            .GetPlugin("PsiCAT Smart Devices"))
+                .SmartLights;
+        }
+    }
+
+
+    public async Task UpdateState()
+    {
+        IsOn = this.light != null 
+               && await light.IsOn();
+    }
+
+    
+    private YeelightDevice? GetLight()
+    {
+        if (SmartDevice == null)
+            return null;
+        
+        return !this.SmartLights.Lights.ContainsKey(SmartDevice.IP) 
+                   ? null 
+                   : this.SmartLights.Lights[SmartDevice.IP];
+    }
+}
