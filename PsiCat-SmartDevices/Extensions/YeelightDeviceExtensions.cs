@@ -50,6 +50,20 @@ namespace PsiCat.SmartDevices
         }
 
 
+        public static async Task<int> GetBrightness(this YeelightDevice yeelightDevice)
+        {
+            if (!yeelightDevice.IsConnected)
+                return 0;
+            if (await yeelightDevice.IsOn() == false)
+                return 0;
+            
+            object brightnessProperty = await yeelightDevice.GetProp(PROPERTIES.bright);
+            return brightnessProperty != null 
+                       ? int.Parse(brightnessProperty.ToString() ?? "0") 
+                       : 0;
+        }
+
+
         public static async Task<Color> GetColor(this YeelightDevice yeelightDevice)
         {
             if (!yeelightDevice.IsConnected)
@@ -62,7 +76,6 @@ namespace PsiCat.SmartDevices
                 return Color.Black;
             
             int colorValue = int.Parse(colorProperty.ToString() ?? "0");
-
 
             return Color.FromArgb(colorValue);
         }

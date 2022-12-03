@@ -15,11 +15,20 @@
     </span>
     
     <input type="color"
+           class="color-input"
            value="@Color"
            disabled="@IsDisabled"
            @onchange="UpdateColor"
     />
     
+    <input type="range"
+           min="1"
+           max="100"
+           value="@Brightness"
+           disabled="@IsDisabled"
+           @onchange="UpdateBrightness"
+    />
+
     <input type="checkbox" 
            @bind="@IsOn" 
            disabled="@IsDisabled"
@@ -42,6 +51,7 @@
     public bool IsDisabled { get; set; } = true;
     public bool IsOn { get; private set; }
     public string Color { get; private set; } = "#FFF";
+    public int Brightness { get; private set; } = 100;
     
     private SmartDevice? smartDevice;
 
@@ -68,6 +78,7 @@
             ? await this.light.GetColor()
             : System.Drawing.Color.Black;
         this.Color = ColorTranslator.ToHtml(color);
+        this.Brightness = await this.light.GetBrightness();
     }
 
 
@@ -80,21 +91,36 @@
         }
             
         Color color = ColorTranslator.FromHtml(args.Value.ToString() ?? "#000");
+        
         int hue = Math.Clamp((int)(color.GetHue()), 1, 359);
-        int saturation = Math.Clamp((int)(color.GetSaturation() * 100f), 0, 100);
-        int brightness = Math.Clamp((int)(color.GetBrightness() * 100f), 0, 100);
+        int saturation = Math.Clamp((int)(color.GetRealSaturation() * 100f), 0, 100);
+        int brightness = Math.Clamp((int)(color.GetValue() * 100f), 0, 100);
         
         if (brightness > 0)
         {
             await this.light.TurnOn();
             await this.light.SetHSVColor(hue, saturation);
-            await this.light.SetBrightness(brightness);    
         }
         else
         {
             await this.light.TurnOff();
         }
 
+        await UpdateState();
+    }
+
+
+    public async Task UpdateBrightness(ChangeEventArgs args)
+    {
+        if (this.light == null
+            || args.Value == null)
+        {
+            return;
+        }
+        
+        Brightness = int.Parse(args.Value!.ToString()!);
+        await this.light.SetBrightness(Brightness);
+        
         await UpdateState();
     }
     
