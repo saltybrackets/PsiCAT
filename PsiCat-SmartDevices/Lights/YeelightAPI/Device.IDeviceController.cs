@@ -192,7 +192,7 @@ namespace YeelightAPI
         /// <summary>
         /// Change the device brightness asynchronously
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Between 1 and 100</param>
         /// <param name="smooth"></param>
         /// <returns></returns>
         public async Task<bool> SetBrightness(int value, int? smooth = null)
@@ -241,8 +241,8 @@ namespace YeelightAPI
         /// <summary>
         /// Change HSV color asynchronously
         /// </summary>
-        /// <param name="hue"></param>
-        /// <param name="sat"></param>
+        /// <param name="hue">Between 0 and 359</param>
+        /// <param name="sat">Between 0 and 100</param>
         /// <param name="smooth"></param>
         /// <returns></returns>
         public async Task<bool> SetHSVColor(int hue, int sat, int? smooth = null)

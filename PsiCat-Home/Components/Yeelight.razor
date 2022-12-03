@@ -4,14 +4,22 @@
 @using PsiCat
 @using PsiCat.SmartDevices
 @using YeelightAPI
+@using System.Drawing
+@using NLog
 @inject PsiCatClient Client
 @inject SmartDevicesPlugin SmartDevices
 
 <div>
     <span style="color: @(IsDisabled ? "#999" : "#000");">
-        @(SmartDevice != null ? SmartDevice.Name : "NULL")    
+        @(SmartDevice != null ? SmartDevice.Name : "NULL")
     </span>
-     
+    
+    <input type="color"
+           value="@Color"
+           disabled="@IsDisabled"
+           @onchange="UpdateColor"
+    />
+    
     <input type="checkbox" 
            @bind="@IsOn" 
            disabled="@IsDisabled"
@@ -31,8 +39,9 @@
         }
     }
     
-    public bool IsOn { get; private set; }
     public bool IsDisabled { get; set; } = true;
+    public bool IsOn { get; private set; }
+    public string Color { get; private set; } = "#FFF";
     
     private SmartDevice? smartDevice;
 
@@ -52,15 +61,50 @@
         this.IsDisabled = this.light == null
                      || !this.light.IsConnected;
                                        
-        
         this.IsOn = this.light != null 
                && await light.IsOn();
+        
+        Color color = this.light != null 
+            ? await this.light.GetColor()
+            : System.Drawing.Color.Black;
+        this.Color = ColorTranslator.ToHtml(color);
     }
 
 
+    public async Task UpdateColor(ChangeEventArgs args)
+    {
+        if (this.light == null
+            || args.Value == null)
+        {
+            return;
+        }
+            
+        Color color = ColorTranslator.FromHtml(args.Value.ToString() ?? "#000");
+        int hue = Math.Clamp((int)(color.GetHue()), 1, 359);
+        int saturation = Math.Clamp((int)(color.GetSaturation() * 100f), 0, 100);
+        int brightness = Math.Clamp((int)(color.GetBrightness() * 100f), 0, 100);
+        
+        if (brightness > 0)
+        {
+            await this.light.TurnOn();
+            await this.light.SetHSVColor(hue, saturation);
+            await this.light.SetBrightness(brightness);    
+        }
+        else
+        {
+            await this.light.TurnOff();
+        }
+
+        await UpdateState();
+    }
+    
+    
     public async Task Toggle()
     {
-        await this.light.Toggle();
+        YeelightDevice? yeelightDevice = this.light;
+        if (yeelightDevice == null)
+            return;
+        await yeelightDevice.Toggle();
         await UpdateState();
     }
 

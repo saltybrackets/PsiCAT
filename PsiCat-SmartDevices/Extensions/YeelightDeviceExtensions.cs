@@ -1,6 +1,7 @@
 namespace PsiCat.SmartDevices
 {
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Linq;
     using System.Threading.Tasks;
     using YeelightAPI;
@@ -46,6 +47,24 @@ namespace PsiCat.SmartDevices
             object powerProperty = await yeelightDevice.GetProp(PROPERTIES.power);
             
             return powerProperty.ToString() == "on";
+        }
+
+
+        public static async Task<Color> GetColor(this YeelightDevice yeelightDevice)
+        {
+            if (!yeelightDevice.IsConnected)
+                return Color.Black;
+            if (await yeelightDevice.IsOn() == false)
+                return Color.Black;
+            
+            object colorProperty = await yeelightDevice.GetProp(PROPERTIES.rgb);
+            if (colorProperty == null)
+                return Color.Black;
+            
+            int colorValue = int.Parse(colorProperty.ToString() ?? "0");
+
+
+            return Color.FromArgb(colorValue);
         }
     }
 }
