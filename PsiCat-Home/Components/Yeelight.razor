@@ -70,14 +70,15 @@
     {
         this.IsDisabled = this.light == null
                      || !this.light.IsConnected;
+
+        if (this.IsDisabled)
+            return;
                                        
-        this.IsOn = this.light != null 
-               && await light.IsOn();
-        
-        Color color = this.light != null 
-            ? await this.light.GetColor()
-            : System.Drawing.Color.Black;
-        this.Color = ColorTranslator.ToHtml(color);
+        this.IsOn = await light.IsOn();
+
+        this.Color = ColorTranslator.ToHtml(
+            await this.light.GetColor());
+
         this.Brightness = await this.light.GetBrightness();
     }
 
@@ -106,7 +107,7 @@
             await this.light.TurnOff();
         }
 
-        await UpdateState();
+        //await UpdateState();
     }
 
 
@@ -121,7 +122,7 @@
         Brightness = int.Parse(args.Value!.ToString()!);
         await this.light.SetBrightness(Brightness);
         
-        await UpdateState();
+        //await UpdateState();
     }
     
     
@@ -131,7 +132,7 @@
         if (yeelightDevice == null)
             return;
         await yeelightDevice.Toggle();
-        await UpdateState();
+        //await UpdateState();
     }
 
     
