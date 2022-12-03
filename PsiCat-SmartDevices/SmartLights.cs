@@ -18,7 +18,6 @@ namespace PsiCat.SmartDevices
         
         public async Task LocateAll(SmartDevicesConfig config = null)
         {
-            //NetworkDiscovery.PingAll();
             DeviceLocator.UseAllAvailableMulticastAddresses = true;
             IEnumerable<YeelightDevice> foundLights = await DeviceLocator.DiscoverAsync();
 
@@ -35,7 +34,8 @@ namespace PsiCat.SmartDevices
                 this.Logger.Log($"Found Light: {light.Model} on {light.Hostname}");
                 this.Lights.Add(light.Hostname, light);
                 await light.Connect();
-                light.ApplyToConfig(config);
+                if (config != null)
+                    light.ApplyToConfig(config);
             }
 			
             this.Logger.Log($"Found {this.Lights.Count} lights.");

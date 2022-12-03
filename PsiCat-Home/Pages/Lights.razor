@@ -5,6 +5,10 @@
 @inject SmartDevicesPlugin SmartDevices
 
 <h3>Lights</h3>
+<button type="button" @onclick="Refresh" disabled="@RefreshDisabled">
+    <span class="oi oi-reload"></span>
+    Refresh
+</button>
 
 <div>
     <ul>
@@ -19,19 +23,14 @@
 
 @code 
 {
+    private bool RefreshDisabled { get; set; } = true;
     private List<Yeelight?> Yeelights { get; set; } = new List<Yeelight?>();
-    private Timer timer = new Timer();
-    
+
     private SmartDevicesConfig Config
     {
         get { return (SmartDevicesConfig)SmartDevices.Config; }
     }
 
-    private SmartLights SmartLights
-    {
-        get { return SmartDevices.SmartLights; }
-    }
-    
     private Yeelight? yeelightElement
     {
         set { Yeelights.Add(value); }
@@ -41,23 +40,36 @@
     {
         if (firstRender)
         {
-            timer.Elapsed += PollState;
-            timer.Interval = 1000;
-            timer.AutoReset = true;
-            timer.Start();    
+            UpdateState();
         }
         
         base.OnAfterRender(firstRender);
     }
 
 
-    private async void PollState(object? sender, ElapsedEventArgs e)
+    private async void UpdateState()
     {
         foreach (Yeelight? light in Yeelights)
         {
             if (light != null)
                 await light.UpdateState();
         }
+        this.RefreshDisabled = false;
         await InvokeAsync(StateHasChanged);
+    }
+
+
+    private async void Refresh()
+    {
+        foreach (Yeelight? light in Yeelights)
+        {
+            if (light != null)
+                light.IsDisabled = true;
+        }
+        this.RefreshDisabled = true;
+        await InvokeAsync(StateHasChanged);
+        
+        await SmartDevices.SmartLights.LocateAll();
+        UpdateState();
     }
 }

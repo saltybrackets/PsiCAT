@@ -5,14 +5,19 @@
 @using PsiCat.SmartDevices
 @using YeelightAPI
 @inject PsiCatClient Client
+@inject SmartDevicesPlugin SmartDevices
 
-<span>
-    @(SmartDevice != null ? SmartDevice.Name : "NULL") 
+<div>
+    <span style="color: @(IsDisabled ? "#999" : "#000");">
+        @(SmartDevice != null ? SmartDevice.Name : "NULL")    
+    </span>
+     
     <input type="checkbox" 
            @bind="@IsOn" 
-           @onclick="() => this.light.Toggle()"
+           disabled="@IsDisabled"
+           @onclick="Toggle"
     />
-</span>
+</div>
 
 @code
 {
@@ -27,7 +32,8 @@
     }
     
     public bool IsOn { get; private set; }
-
+    public bool IsDisabled { get; set; } = true;
+    
     private SmartDevice? smartDevice;
 
     private YeelightDevice? light
@@ -37,19 +43,25 @@
     
     private SmartLights SmartLights
     {
-        get
-        {
-            return ((SmartDevicesPlugin)
-                    Client.Plugins["PsiCAT Smart Devices"])
-                .SmartLights;
-        }
+        get { return SmartDevices.SmartLights; }
     }
 
 
     public async Task UpdateState()
     {
-        IsOn = this.light != null 
+        this.IsDisabled = this.light == null
+                     || !this.light.IsConnected;
+                                       
+        
+        this.IsOn = this.light != null 
                && await light.IsOn();
+    }
+
+
+    public async Task Toggle()
+    {
+        await this.light.Toggle();
+        await UpdateState();
     }
 
     
