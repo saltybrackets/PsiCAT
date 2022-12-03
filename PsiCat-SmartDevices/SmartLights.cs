@@ -25,20 +25,20 @@ namespace PsiCat.SmartDevices
             YeelightDevice[] lights = foundLights as YeelightDevice[] ?? foundLights.ToArray();
             if (lights.Length == 0)
             {
-                this.Logger.LogInfo("No lights found.");
+                this.Logger.Log("No lights found.");
                 return;
             }
 
             this.Lights = new Dictionary<string, YeelightDevice>();
             foreach (YeelightDevice light in lights)
             {
-                this.Logger.LogInfo($"Found Light: {light.Model} on {light.Hostname}");
+                this.Logger.Log($"Found Light: {light.Model} on {light.Hostname}");
                 this.Lights.Add(light.Hostname, light);
                 await light.Connect();
                 light.ApplyToConfig(config);
             }
 			
-            this.Logger.LogInfo($"Found {this.Lights.Count} lights.");
+            this.Logger.Log($"Found {this.Lights.Count} lights.");
         }
     }
 }

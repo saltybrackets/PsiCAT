@@ -2,6 +2,7 @@
 @using System.Timers
 @using PsiCat.SmartDevices
 @inject PsiCatClient Client
+@inject SmartDevicesPlugin SmartDevices
 
 <h3>Lights</h3>
 
@@ -16,37 +17,24 @@
 </div>
 
 
-
 @code 
 {
     private List<Yeelight?> Yeelights { get; set; } = new List<Yeelight?>();
     private Timer timer = new Timer();
     
-    private Yeelight? yeelightElement
-    {
-        set { Yeelights.Add(value); }
-    }
-    
     private SmartDevicesConfig Config
     {
-        get
-        {
-            return (SmartDevicesConfig)Client
-                                           .Plugins
-                                           .GetPlugin("PsiCAT Smart Devices")
-                                           .Config;
-        }
+        get { return (SmartDevicesConfig)SmartDevices.Config; }
     }
 
     private SmartLights SmartLights
     {
-        get
-        {
-            return ((SmartDevicesPlugin)Client
-                                            .Plugins
-                                            .GetPlugin("PsiCAT Smart Devices"))
-                .SmartLights;
-        }
+        get { return SmartDevices.SmartLights; }
+    }
+    
+    private Yeelight? yeelightElement
+    {
+        set { Yeelights.Add(value); }
     }
     
     protected override void OnAfterRender(bool firstRender)
@@ -65,7 +53,7 @@
 
     private async void PollState(object? sender, ElapsedEventArgs e)
     {
-        foreach (Yeelight? light in this.Yeelights)
+        foreach (Yeelight? light in Yeelights)
         {
             if (light != null)
                 await light.UpdateState();

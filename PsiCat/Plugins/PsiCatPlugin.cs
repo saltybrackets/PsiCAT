@@ -4,7 +4,6 @@ namespace PsiCat.Plugins
     {
         public abstract PluginHost PluginHost { get; set; }
 
-        public ILogger Logger { get; set; }
         public abstract string Name { get; }
         public abstract string Description { get; }
         public abstract string Author { get; }
@@ -14,6 +13,10 @@ namespace PsiCat.Plugins
 
         public abstract void OnStart();
 
+        public virtual ILogger Logger
+        {
+            get { return this.PluginHost.Logger; }
+        }
 
         public virtual void OnInitialize()
         {

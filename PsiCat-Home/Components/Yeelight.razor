@@ -39,9 +39,8 @@
     {
         get
         {
-            return ((SmartDevicesPlugin)Client
-                                            .Plugins
-                                            .GetPlugin("PsiCAT Smart Devices"))
+            return ((SmartDevicesPlugin)
+                    Client.Plugins["PsiCAT Smart Devices"])
                 .SmartLights;
         }
     }

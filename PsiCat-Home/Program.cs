@@ -1,68 +1,114 @@
-using Microsoft.AspNetCore.Authentication.Negotiate;
-using PsiCat;
-using PsiCat.Home;
-using PsiCat.SmartDevices;
-
-
 namespace PsiCat.Home
 {
+    using Microsoft.AspNetCore.Authentication.Negotiate;
+    using NLog;
+    using NLog.Web;
+    using PsiCat;
+    using PsiCat.SmartDevices;
+
+
     public class Program
     {
-        public static void Main(string[] args)
+        private static PsiCatClient psiCatClient;
+        private static Logger logger;
+
+        public static async Task Main(string[] args)
         {
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            SetupLogging(builder);
+            
+            psiCatClient = new PsiCatClient();
+            StartPsiCatServices();
+            
+            RegisterServices(builder);
+            
+            WebApplication webApplication = builder.Build();
+            ConfigureWebApplication(webApplication);
+
+            await webApplication.RunAsync();
+        }
+
+
+        private static void SetupLogging(WebApplicationBuilder builder)
+        {
+            NLog.LogManager.Setup()
+                .LoadConfiguration(builder => {
+                        builder.ForLogger()
+                            .FilterMinLevel(LogLevel.Info)
+                            .WriteToConsole();
+                        builder.ForLogger()
+                            .FilterMinLevel(LogLevel.Info)
+                            .WriteToFile(fileName: "psicat-home.log");
+                    });
+            
+            logger = LogManager.Setup()
+                .LoadConfigurationFromAppSettings()
+                .GetCurrentClassLogger();
+            
+            builder.Logging.AddConsole();
+            builder.Host.UseNLog();
+        }
+
+
+        private static void StartPsiCatServices()
+        {
+            psiCatClient.Logger = new NLogLoggingAdapter(logger);
+            psiCatClient.LoadPlugins();
+            psiCatClient.LoadConfig();
+            psiCatClient.LoadInternalCommands();
+            psiCatClient.Start();
+        }
         
 
-            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            //   AddSingleton for global services.
-            //   AddScoped for user-specific services.
-            /*
+        private static void AddAuthenticationService(WebApplicationBuilder builder)
+        {
             builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
                 .AddNegotiate();
-            
+
             builder.Services.AddAuthorization(
                 options =>
                     {
                         // By default, all incoming requests will be authorized according to the default policy.
                         options.FallbackPolicy = options.DefaultPolicy;
                     });
-            */
-            PsiCatClient psiCatClient = new PsiCatClient();
-            builder.Services.AddSingleton(psiCatClient);
-            builder.Services.AddRazorPages();
-            builder.Services.AddServerSideBlazor();
+        }
 
-            WebApplication app = builder.Build();
 
-            // Start PsiCAT
-            psiCatClient.Logger = new MicrosoftLoggingAdapter(app.Logger);
-            psiCatClient.LoadPlugins();
-            psiCatClient.LoadConfig();
-            psiCatClient.LoadInternalCommands();
-            psiCatClient.Start();
-
+        private static void ConfigureWebApplication(WebApplication webApplication)
+        {
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            if (!webApplication.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Error");
+                webApplication.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                webApplication.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            webApplication.UseHttpsRedirection();
+            webApplication.UseStaticFiles();
+            webApplication.UseRouting();
+            webApplication.UseAuthentication();
+            webApplication.UseAuthorization();
+            webApplication.MapBlazorHub();
+            webApplication.MapFallbackToPage("/_Host");
+        }
 
-            app.UseStaticFiles();
 
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.MapBlazorHub();
-            app.MapFallbackToPage("/_Host");
-
-            app.Run();
+        // Add services to the container.
+        //   AddSingleton for global services.
+        //   AddScoped for user-specific services.
+        private static void RegisterServices(WebApplicationBuilder builder)
+        {
+            SmartDevicesPlugin smartDevices = (SmartDevicesPlugin)psiCatClient.Plugins["PsiCAT Smart Devices"];
+            
+            // PsiCAT Services
+            builder.Services.AddSingleton(psiCatClient);
+            builder.Services.AddSingleton(smartDevices);
+            
+            // Blazor Services
+            builder.Services.AddRazorPages();
+            builder.Services.AddServerSideBlazor();
+            // AddAuthenticationService(builder);
         }
     }
 }

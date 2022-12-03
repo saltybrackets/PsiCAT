@@ -36,16 +36,15 @@
     {
         get
         {
-            return (SmartDevicesConfig)Client
-                       .Plugins
-                       .GetPlugin("PsiCAT Smart Devices")
+            return (SmartDevicesConfig)
+                   Client
+                       .Plugins["PsiCAT Smart Devices"]
                        .Config;
         }
         set
         {
             Client
-                .Plugins
-                .GetPlugin("PsiCAT Smart Devices")
+                .Plugins["PsiCAT Smart Devices"]
                 .Config = value;
         }
     }

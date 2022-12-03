@@ -17,7 +17,7 @@ namespace PsiCat
         /// Logger that will be used across plugin host and child plugins.
         /// </summary>
         public ILogger Logger;
-        
+
         /// <summary>
         /// Main PsiCAT and plugins config.
         /// </summary>
@@ -35,13 +35,13 @@ namespace PsiCat
 
 
         /// <summary>
-        /// Indicates when all components are loaded, and plugins may begin working.
+        /// 
         /// </summary>
-        public void Start()
+        public void Close()
         {
             foreach (PsiCatPlugin plugin in this.Plugins.Collection)
             {
-                plugin.OnStart();
+                plugin.OnClose();
             }
         }
 
@@ -61,7 +61,7 @@ namespace PsiCat
             }
             else
             {
-                LogWarning($"Creating new config at: {path}");
+                this.Logger.LogWarning($"Creating new config at: {path}");
                 this.Config = new PsiCatConfig();
                 this.Config.Save(path);
             }
@@ -85,38 +85,36 @@ namespace PsiCat
         /// </summary>
         public void LoadPlugins()
         {
-            LogInfo($"Loading plugins at: {PluginsPath}...");
+            this.Logger.Log($"Loading plugins at: {PluginsPath}...");
             
-            this.Plugins = new PluginHost();
-            this.Plugins.Logger = this.Logger;
+            this.Plugins = new PluginHost(this);
 
             if (Directory.Exists(PluginsPath))
             {
                 this.Plugins.LocatePlugins(PluginsPath, this.Commands);
                 foreach (PsiCatPlugin plugin in this.Plugins.Collection)
                 {
-                    LogInfo($"Initializing plugin: {plugin.Name}");
-                    plugin.Logger = this.Logger;
+                    this.Logger.Log($"Initializing plugin: {plugin.Name}");
                     plugin.PluginHost = this.Plugins;
                     plugin.OnInitialize();
                 }
             }
             else
             {
-                LogWarning($"Creating new plugins directory at: {PluginsPath}");
+                this.Logger.LogWarning($"Creating new plugins directory at: {PluginsPath}");
                 Directory.CreateDirectory(PluginsPath);
             }
         }
 
 
         /// <summary>
-        /// 
+        /// Indicates when all components are loaded, and plugins may begin working.
         /// </summary>
-        public void Close()
+        public void Start()
         {
             foreach (PsiCatPlugin plugin in this.Plugins.Collection)
             {
-                plugin.OnClose();
+                plugin.OnStart();
             }
         }
 
@@ -127,31 +125,6 @@ namespace PsiCat
             {
                 plugin.OnUpdate();
             }
-        }
-
-
-        public void LogInfo(string message)
-        {
-            if (this.Logger != null)
-                this.Logger.LogInfo(message);
-        }
-        
-        public void LogWarning(string message)
-        {
-            if (this.Logger != null)
-                this.Logger.LogWarning(message);
-        }
-        
-        public void LogError(string message)
-        {
-            if (this.Logger != null)
-                this.Logger.LogError(message);
-        }
-        
-        public void Log(string message)
-        {
-            if (this.Logger != null)
-                this.Logger.Log(message);
         }
     }
 }

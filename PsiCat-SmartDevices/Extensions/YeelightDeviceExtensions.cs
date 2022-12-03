@@ -12,7 +12,7 @@ namespace PsiCat.SmartDevices
         public static SmartDevice ToSmartDevice(this YeelightDevice yeelightDevice)
         {
             SmartDevice smartDevice = new SmartDevice();
-            smartDevice.Name = $"Unknown {yeelightDevice.Model} Light";
+            smartDevice.Name = $"{yeelightDevice.Model} Yeelight";
             smartDevice.IP = yeelightDevice.Hostname;
             smartDevice.Type = SmartDeviceType.Light;
 

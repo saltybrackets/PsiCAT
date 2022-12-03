@@ -11,27 +11,31 @@ namespace PsiCat.Plugins
     /// </summary>
     public class PluginHost
     {
-        private Dictionary<string, PsiCatPlugin> pluginCollection;
+        private readonly Dictionary<string, PsiCatPlugin> pluginCollection;
+        private readonly PsiCatClient client;
 
 
-        public PluginHost()
+        public PsiCatPlugin this[string key] 
         {
-            this.pluginCollection = new Dictionary<string, PsiCatPlugin>();
+            get { return this.pluginCollection[key]; }
         }
         
-        
-        public ILogger Logger { get; set; }
+        public PluginHost(PsiCatClient client)
+        {
+            this.pluginCollection = new Dictionary<string, PsiCatPlugin>();
+            this.client = client;
+        }
 
-        
+
         public Dictionary<string, PsiCatPlugin>.ValueCollection Collection
         {
             get { return this.pluginCollection.Values; }
         }
-        
 
-        public PsiCatPlugin GetPlugin(string key)
+        
+        public ILogger Logger
         {
-            return this.pluginCollection[key];
+            get { return this.client.Logger; }
         }
 
 
@@ -93,7 +97,7 @@ namespace PsiCat.Plugins
                 if (!this.pluginCollection.ContainsKey(newPlugin.Name))
                 {
                     if (this.Logger != null)
-                        this.Logger.LogInfo($"Found PsiCAT Plugin: {newPlugin.Name}.");
+                        this.Logger.Log($"Found PsiCAT Plugin: {newPlugin.Name}.");
                     
                     foundPlugins = true;
                     newPlugin.PluginHost = this;
