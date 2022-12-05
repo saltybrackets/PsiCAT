@@ -12,13 +12,17 @@ namespace PsiCat.SmartDevices
         public ILogger Logger { get; set; }
 
         // IP : YeelightDevice
-        public Dictionary<string, YeelightDevice> Lights { get; private set; }
+        public Dictionary<string, YeelightDevice> Lights { get; private set; } = 
+            new Dictionary<string, YeelightDevice>();
 
-        private Dictionary<string, DeviceGroup> LightGroups { get; set; }
+        private Dictionary<string, DeviceGroup> LightGroups { get; set; } = 
+            new Dictionary<string, DeviceGroup>();
         
         public async Task LocateAll(SmartDevicesConfig config = null)
         {
+            this.Lights.Clear();
             DeviceLocator.UseAllAvailableMulticastAddresses = true;
+            
             IEnumerable<YeelightDevice> foundLights = await DeviceLocator.DiscoverAsync();
 
             YeelightDevice[] lights = foundLights as YeelightDevice[] ?? foundLights.ToArray();
@@ -28,7 +32,6 @@ namespace PsiCat.SmartDevices
                 return;
             }
 
-            this.Lights = new Dictionary<string, YeelightDevice>();
             foreach (YeelightDevice light in lights)
             {
                 this.Logger.Log($"Found Light: {light.Model} on {light.Hostname}");

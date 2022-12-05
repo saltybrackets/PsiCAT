@@ -1,11 +1,8 @@
-@namespace PsiCat.Home.Components
+@namespace PsiCat.Home
 
-@using System.Timers
 @using PsiCat
 @using PsiCat.SmartDevices
-@using YeelightAPI
 @using System.Drawing
-@using NLog
 @inject PsiCatClient Client
 @inject SmartDevicesPlugin SmartDevices
 
@@ -35,114 +32,3 @@
            @onclick="Toggle"
     />
 </div>
-
-@code
-{
-    [Parameter]
-    public SmartDevice? SmartDevice
-    {
-        get { return this.smartDevice; }
-        set
-        {
-            this.smartDevice = value;
-        }
-    }
-    
-    public bool IsDisabled { get; set; } = true;
-    public bool IsOn { get; private set; }
-    public string Color { get; private set; } = "#FFF";
-    public int Brightness { get; private set; } = 100;
-    
-    private SmartDevice? smartDevice;
-
-    private YeelightDevice? light
-    {
-        get { return GetLight(); }
-    }
-    
-    private SmartLights SmartLights
-    {
-        get { return SmartDevices.SmartLights; }
-    }
-
-
-    public async Task UpdateState()
-    {
-        this.IsDisabled = this.light == null
-                     || !this.light.IsConnected;
-
-        if (this.IsDisabled)
-            return;
-                                       
-        this.IsOn = await light.IsOn();
-
-        this.Color = ColorTranslator.ToHtml(
-            await this.light.GetColor());
-
-        this.Brightness = await this.light.GetBrightness();
-    }
-
-
-    public async Task UpdateColor(ChangeEventArgs args)
-    {
-        if (this.light == null
-            || args.Value == null)
-        {
-            return;
-        }
-            
-        Color color = ColorTranslator.FromHtml(args.Value.ToString() ?? "#000");
-        
-        int hue = Math.Clamp((int)(color.GetHue()), 1, 359);
-        int saturation = Math.Clamp((int)(color.GetRealSaturation() * 100f), 0, 100);
-        int brightness = Math.Clamp((int)(color.GetValue() * 100f), 0, 100);
-        
-        if (brightness > 0)
-        {
-            await this.light.TurnOn();
-            await this.light.SetHSVColor(hue, saturation);
-        }
-        else
-        {
-            await this.light.TurnOff();
-        }
-
-        //await UpdateState();
-    }
-
-
-    public async Task UpdateBrightness(ChangeEventArgs args)
-    {
-        if (this.light == null
-            || args.Value == null)
-        {
-            return;
-        }
-        
-        Brightness = int.Parse(args.Value!.ToString()!);
-        await this.light.SetBrightness(Brightness);
-        
-        //await UpdateState();
-    }
-    
-    
-    public async Task Toggle()
-    {
-        YeelightDevice? yeelightDevice = this.light;
-        if (yeelightDevice == null)
-            return;
-        await yeelightDevice.Toggle();
-        //await UpdateState();
-    }
-
-    
-    private YeelightDevice? GetLight()
-    {
-        if (SmartDevice == null)
-            return null;
-        
-        return !this.SmartLights.Lights.ContainsKey(SmartDevice.IP) 
-                   ? null 
-                   : this.SmartLights.Lights[SmartDevice.IP];
-    }
-}

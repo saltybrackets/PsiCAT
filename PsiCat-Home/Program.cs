@@ -52,7 +52,7 @@ namespace PsiCat.Home
 
         private static void StartPsiCatServices()
         {
-            psiCatClient.Logger = new NLogLoggingAdapter(logger);
+            psiCatClient.Logger = new PsiCatHomeLogger(logger);
             psiCatClient.LoadPlugins();
             psiCatClient.LoadConfig();
             psiCatClient.LoadInternalCommands();
@@ -62,7 +62,8 @@ namespace PsiCat.Home
 
         private static void AddAuthenticationService(WebApplicationBuilder builder)
         {
-            builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+            builder.Services
+                .AddAuthentication(NegotiateDefaults.AuthenticationScheme)
                 .AddNegotiate();
 
             builder.Services.AddAuthorization(
@@ -87,10 +88,12 @@ namespace PsiCat.Home
             webApplication.UseHttpsRedirection();
             webApplication.UseStaticFiles();
             webApplication.UseRouting();
-            webApplication.UseAuthentication();
-            webApplication.UseAuthorization();
             webApplication.MapBlazorHub();
             webApplication.MapFallbackToPage("/_Host");
+            
+            // Authentication
+            //webApplication.UseAuthentication();
+            //webApplication.UseAuthorization();
         }
 
 
@@ -108,7 +111,9 @@ namespace PsiCat.Home
             // Blazor Services
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
-            // AddAuthenticationService(builder);
+            
+            // Authentication
+            //AddAuthenticationService(builder);
         }
     }
 }

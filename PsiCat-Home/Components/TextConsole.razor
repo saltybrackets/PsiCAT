@@ -1,0 +1,14 @@
+@namespace PsiCat.Home
+
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@inject PsiCatClient Client
+
+<textarea 
+    class="form-control" 
+    @ref="textAreaReference"
+    value="@Contents.ConsoleContent"
+    readonly="true"
+    rows="3"
+/>
+
