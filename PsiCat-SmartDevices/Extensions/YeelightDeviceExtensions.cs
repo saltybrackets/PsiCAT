@@ -10,17 +10,6 @@ namespace PsiCat.SmartDevices
 
     public static class YeelightDeviceExtensions
     {
-        public static SmartDevice ToSmartDevice(this YeelightDevice yeelightDevice)
-        {
-            SmartDevice smartDevice = new SmartDevice();
-            smartDevice.Name = $"{yeelightDevice.Model} Yeelight";
-            smartDevice.IP = yeelightDevice.Hostname;
-            smartDevice.Type = SmartDeviceType.Light;
-
-            return smartDevice;
-        }
-
-
         public static void ApplyToConfig(
             this YeelightDevice yeelightDevice, 
             SmartDevicesConfig config)
@@ -40,16 +29,6 @@ namespace PsiCat.SmartDevices
         }
 
 
-        public static async Task<bool> IsOn(this YeelightDevice yeelightDevice)
-        {
-            if (!yeelightDevice.IsConnected)
-                return false;
-            object powerProperty = await yeelightDevice.GetProp(PROPERTIES.power);
-            
-            return powerProperty.ToString() == "on";
-        }
-
-
         public static async Task<int> GetBrightness(this YeelightDevice yeelightDevice)
         {
             if (!yeelightDevice.IsConnected)
@@ -61,6 +40,12 @@ namespace PsiCat.SmartDevices
             return brightnessProperty != null 
                        ? int.Parse(brightnessProperty.ToString() ?? "0") 
                        : 0;
+        }
+
+
+        public static int GetBrightness(this Dictionary<PROPERTIES, object> yeelightProps)
+        {
+            return int.Parse(yeelightProps[PROPERTIES.bright].ToString() ?? "0");
         }
 
 
@@ -78,6 +63,40 @@ namespace PsiCat.SmartDevices
             int colorValue = int.Parse(colorProperty.ToString() ?? "0");
 
             return Color.FromArgb(colorValue);
+        }
+
+
+        public static Color GetColor(this Dictionary<PROPERTIES, object> yeelightProps)
+        {
+            int colorValue = int.Parse(yeelightProps[PROPERTIES.rgb].ToString() ?? "0");
+            return Color.FromArgb(colorValue);
+        }
+
+
+        public static async Task<bool> IsOn(this YeelightDevice yeelightDevice)
+        {
+            if (!yeelightDevice.IsConnected)
+                return false;
+            object powerProperty = await yeelightDevice.GetProp(PROPERTIES.power);
+            
+            return powerProperty.ToString() == "on";
+        }
+
+
+        public static bool IsOn(this Dictionary<PROPERTIES, object> yeelightProps)
+        {
+            return yeelightProps[PROPERTIES.power].ToString() == "on";
+        }
+
+
+        public static SmartDevice ToSmartDevice(this YeelightDevice yeelightDevice)
+        {
+            SmartDevice smartDevice = new SmartDevice();
+            smartDevice.Name = $"{yeelightDevice.Model} Yeelight";
+            smartDevice.IP = yeelightDevice.Hostname;
+            smartDevice.Type = SmartDeviceType.Light;
+
+            return smartDevice;
         }
     }
 }

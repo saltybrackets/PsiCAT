@@ -71,3 +71,8 @@ a, .btn-link {
     border-radius: 50%;
     border: none transparent;
 }
+
+footer {
+    position: fixed;
+    bottom: 0;
+}

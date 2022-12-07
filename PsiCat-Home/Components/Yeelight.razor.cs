@@ -2,8 +2,10 @@ namespace PsiCat.Home;
 
 using System.Drawing;
 using Microsoft.AspNetCore.Components;
+using Newtonsoft.Json;
 using PsiCat.SmartDevices;
 using YeelightAPI;
+using YeelightAPI.Models;
 
 
 public partial class Yeelight : ComponentBase
@@ -87,18 +89,20 @@ public partial class Yeelight : ComponentBase
 
     public async Task UpdateState()
     {
-        this.IsDisabled = this.light == null
-                     || !this.light.IsConnected;
-
+        if (this.light == null)
+        {
+            this.IsDisabled = true;
+            return;
+        }
+            
+        this.IsDisabled = !this.light.IsConnected;
         if (this.IsDisabled)
             return;
-                                       
-        this.IsOn = await this.light.IsOn();
 
-        this.Color = ColorTranslator.ToHtml(
-            await this.light.GetColor());
-
-        this.Brightness = await this.light.GetBrightness();
+        var lightProps = await this.light.GetAllProps();
+        this.IsOn = lightProps.IsOn();
+        this.Color = ColorTranslator.ToHtml(lightProps.GetColor());
+        this.Brightness = lightProps.GetBrightness();
     }
 
 
@@ -110,5 +114,10 @@ public partial class Yeelight : ComponentBase
         return !this.SmartLights.Lights.ContainsKey(this.SmartDevice.IP) 
                    ? null 
                    : this.SmartLights.Lights[this.SmartDevice.IP];
+    }
+    
+    private async void GetDetails()
+    {
+        
     }
 }

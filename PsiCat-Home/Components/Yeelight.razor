@@ -7,7 +7,7 @@
 @inject SmartDevicesPlugin SmartDevices
 
 <div>
-    <span style="color: @(IsDisabled ? "#999" : "#000");">
+    <span style="float: left; width: 200px; color: @(IsDisabled ? "#999" : "#000");">
         @(SmartDevice != null ? SmartDevice.Name : "NULL")
     </span>
     
@@ -31,4 +31,7 @@
            disabled="@IsDisabled"
            @onclick="Toggle"
     />
+    <button @onclick="GetDetails">
+        ?
+    </button>
 </div>

@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Components;
 public partial class TextConsole : ComponentBase,
                                    IDisposable
 {
-    [Parameter]
+    [Parameter, EditorRequired]
     public IConsoleContents Contents { get; set; }
+
+    [Parameter]
+    public int Rows { get; set; } = 3;
 
     [Parameter]
     public float UpdateInterval { get; set; } = 0.25f;
@@ -17,6 +20,7 @@ public partial class TextConsole : ComponentBase,
     
     private Timer timer;
 
+    private long previousContentLength;
 
     public void Dispose()
     {
@@ -36,10 +40,15 @@ public partial class TextConsole : ComponentBase,
         }
     }
 
-
+    
     private async void RefreshContents(object? sender, ElapsedEventArgs args)
     {
-        await InvokeAsync(StateHasChanged);
-        await this.JS.InvokeAsync<object?>("scrollToEnd", new object?[] { this.textAreaReference });
+        long contentLength = this.Contents.ConsoleContent.Length;
+        if (contentLength != this.previousContentLength)
+        {
+            await InvokeAsync(StateHasChanged);
+            await this.JS.InvokeAsync<object?>("scrollToEnd", new object?[] { this.textAreaReference });
+            this.previousContentLength = this.Contents.ConsoleContent.Length;
+        }
     }
 }
