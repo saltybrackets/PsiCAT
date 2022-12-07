@@ -1,6 +1,5 @@
 namespace PsiCat.SmartDevices
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -12,14 +11,17 @@ namespace PsiCat.SmartDevices
         public ILogger Logger { get; set; }
 
         // IP : YeelightDevice
-        public Dictionary<string, YeelightDevice> Lights { get; private set; } = 
+        public Dictionary<string, YeelightDevice> Lights { get; } = 
             new Dictionary<string, YeelightDevice>();
 
         private Dictionary<string, DeviceGroup> LightGroups { get; set; } = 
             new Dictionary<string, DeviceGroup>();
         
+        public bool IsLocating { get; set; }
+        
         public async Task LocateAll(SmartDevicesConfig config = null)
         {
+            this.IsLocating = true;
             this.Lights.Clear();
             DeviceLocator.UseAllAvailableMulticastAddresses = true;
             
@@ -42,6 +44,7 @@ namespace PsiCat.SmartDevices
             }
 			
             this.Logger.Log($"Found {this.Lights.Count} lights.");
+            this.IsLocating = false;
         }
     }
 }

@@ -10,7 +10,7 @@ using YeelightAPI.Models;
 
 public partial class Yeelight : ComponentBase
 {
-    private SmartDevice? smartDevice;
+    private SmartDevice smartDevice;
 
     public int Brightness { get; private set; } = 100;
     public string Color { get; private set; } = "#FFF";
@@ -19,7 +19,7 @@ public partial class Yeelight : ComponentBase
     public bool IsOn { get; private set; }
 
     [Parameter]
-    public SmartDevice? SmartDevice
+    public SmartDevice SmartDevice
     {
         get { return this.smartDevice; }
         set
@@ -28,7 +28,7 @@ public partial class Yeelight : ComponentBase
         }
     }
 
-    private YeelightDevice? light
+    private YeelightDevice Light
     {
         get { return GetLight(); }
     }
@@ -41,7 +41,7 @@ public partial class Yeelight : ComponentBase
 
     public async Task Toggle()
     {
-        YeelightDevice? yeelightDevice = this.light;
+        YeelightDevice yeelightDevice = this.Light;
         if (yeelightDevice == null)
             return;
         await yeelightDevice.Toggle();
@@ -50,20 +50,20 @@ public partial class Yeelight : ComponentBase
 
     public async Task UpdateBrightness(ChangeEventArgs args)
     {
-        if (this.light == null
+        if (this.Light == null
             || args.Value == null)
         {
             return;
         }
 
         this.Brightness = int.Parse(args.Value!.ToString()!);
-        await this.light.SetBrightness(this.Brightness);
+        await this.Light.SetBrightness(this.Brightness);
     }
 
 
     public async Task UpdateColor(ChangeEventArgs args)
     {
-        if (this.light == null
+        if (this.Light == null
             || args.Value == null)
         {
             return;
@@ -77,47 +77,48 @@ public partial class Yeelight : ComponentBase
         
         if (brightness > 0)
         {
-            await this.light.TurnOn();
-            await this.light.SetHSVColor(hue, saturation);
+            await this.Light.TurnOn();
+            await this.Light.SetHSVColor(hue, saturation);
         }
         else
         {
-            await this.light.TurnOff();
+            await this.Light.TurnOff();
         }
     }
 
 
     public async Task UpdateState()
     {
-        if (this.light == null)
+        if (this.Light == null)
         {
             this.IsDisabled = true;
             return;
         }
             
-        this.IsDisabled = !this.light.IsConnected;
+        this.IsDisabled = !this.Light.IsConnected;
         if (this.IsDisabled)
             return;
 
-        var lightProps = await this.light.GetAllProps();
+        var lightProps = await this.Light.GetAllProps();
         this.IsOn = lightProps.IsOn();
         this.Color = ColorTranslator.ToHtml(lightProps.GetColor());
         this.Brightness = lightProps.GetBrightness();
     }
 
 
-    private YeelightDevice? GetLight()
+    private YeelightDevice GetLight()
     {
         if (this.SmartDevice == null)
             return null;
         
-        return !this.SmartLights.Lights.ContainsKey(this.SmartDevice.IP) 
-                   ? null 
-                   : this.SmartLights.Lights[this.SmartDevice.IP];
+        return (!this.SmartLights.Lights.ContainsKey(this.SmartDevice.IP) 
+                    ? null 
+                    : this.SmartLights.Lights[this.SmartDevice.IP]);
     }
     
-    private async void GetDetails()
+    private void GetDetails()
     {
-        
+        // TODO: Display light details in a popup modal.
+        throw new NotImplementedException();
     }
 }

@@ -1,3 +1,5 @@
+@namespace PsiCat.Home
+
 @page "/lights"
 @using PsiCat.SmartDevices
 @inject PsiCatClient Client
@@ -19,60 +21,6 @@
     </ul>    
 </div>
 
-<footer class="px-4">
+<footer>
     <TextConsole Contents="@(Client.Logger as IConsoleContents)" Rows="1" />
 </footer>
-
-
-@code 
-{
-    private bool RefreshDisabled { get; set; } = true;
-    private List<Yeelight?> Yeelights { get; set; } = new List<Yeelight?>();
-
-    private SmartDevicesConfig Config
-    {
-        get { return (SmartDevicesConfig)SmartDevices.Config; }
-    }
-
-    private Yeelight? yeelightElement
-    {
-        set { Yeelights.Add(value); }
-    }
-    
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            UpdateState();
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
-
-
-    private async void UpdateState()
-    {
-        foreach (Yeelight? light in Yeelights)
-        {
-            if (light != null)
-                await light.UpdateState();
-        }
-        this.RefreshDisabled = false;
-        await InvokeAsync(StateHasChanged);
-    }
-
-
-    private async void Refresh()
-    {
-        foreach (Yeelight? light in Yeelights)
-        {
-            if (light != null)
-                light.IsDisabled = true;
-        }
-        this.RefreshDisabled = true;
-        await InvokeAsync(StateHasChanged);
-        
-        await SmartDevices.SmartLights.LocateAll();
-        UpdateState();
-    }
-}
