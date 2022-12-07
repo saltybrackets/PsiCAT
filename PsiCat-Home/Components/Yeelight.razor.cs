@@ -1,6 +1,7 @@
 namespace PsiCat.Home;
 
 using System.Drawing;
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 using PsiCat.SmartDevices;
@@ -17,6 +18,8 @@ public partial class Yeelight : ComponentBase
 
     public bool IsDisabled { get; set; } = true;
     public bool IsOn { get; private set; }
+
+    private Popup popup;
 
     [Parameter]
     public SmartDevice SmartDevice
@@ -118,7 +121,15 @@ public partial class Yeelight : ComponentBase
     
     private void GetDetails()
     {
-        // TODO: Display light details in a popup modal.
-        throw new NotImplementedException();
+        string lightName = !string.IsNullOrEmpty(this.Light.Name.Trim())
+                               ?  this.Light.Name
+                               : "<None>";
+        StringBuilder bodyText = new StringBuilder()
+            .AppendLine($"**Name:** {lightName}")
+            .AppendLine($"**Model:** {this.Light.Model}")
+            .AppendLine($"**IP:** {this.Light.Hostname}")
+            .AppendLine($"**Port:** {this.Light.Port}");
+
+        this.popup.Show(bodyText.ToString(), $"Smart Light Details");
     }
 }

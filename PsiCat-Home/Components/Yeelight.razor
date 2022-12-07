@@ -31,7 +31,12 @@
            disabled="@IsDisabled"
            @onclick="Toggle"
     />
-    <button @onclick="GetDetails">
+    
+    <button @onclick="GetDetails" disabled="@IsDisabled" class="btn-light">
         ?
     </button>
+    
+    <Popup @ref="popup" />
 </div>
+
+
