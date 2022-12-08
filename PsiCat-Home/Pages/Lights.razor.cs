@@ -6,55 +6,79 @@ using PsiCat.SmartDevices;
 
 public partial class Lights : ComponentBase
 {
+    private bool RefreshDisabled { get; set; } = false;
+    
     private SmartDevicesConfig Config
     {
-        get { return (SmartDevicesConfig)this.SmartDevices.Config; }
+        get
+        {
+            return (SmartDevicesConfig)this.SmartDevices.Config;
+        }
     }
-
-    private bool RefreshDisabled { get; set; } = true;
-
-    private Yeelight yeelightElement
+    
+    private LightGroup LightGroupElement
     {
-        set { this.Yeelights.Add(value); }
+        set { this.LightGroups.Add(value); }
     }
 
-    private List<Yeelight> Yeelights { get; set; } = new List<Yeelight>();
+    private List<LightGroup> LightGroups { get; set; } = new List<LightGroup>();
 
-
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            UpdateState();
+            foreach (LightGroup lightGroup in this.LightGroups)
+            {
+                foreach (Yeelight light in lightGroup.Yeelights)
+                {
+                    await light.UpdateState();
+                }
+            }
+            this.RefreshDisabled = false;
         }
         
-        base.OnAfterRender(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 
     private async void Refresh()
     {
-        foreach (Yeelight light in this.Yeelights)
-        {
-            if (light != null)
-                light.IsDisabled = true;
-        }
         this.RefreshDisabled = true;
+
+        foreach (LightGroup lightGroup in this.LightGroups)
+        {
+            foreach (Yeelight light in lightGroup.Yeelights)
+            {
+                light.IsDisabled = true;
+            }
+        }
+        
         await InvokeAsync(StateHasChanged);
         
         await this.SmartDevices.SmartLights.LocateAll();
-        UpdateState();
+        
+        foreach (LightGroup lightGroup in this.LightGroups)
+        {
+            foreach (Yeelight light in lightGroup.Yeelights)
+            {
+                await light.UpdateState();
+            }
+        }
+        
+        this.RefreshDisabled = false;
+        await InvokeAsync(StateHasChanged);
     }
 
 
-    private async void UpdateState()
+    private KeyValuePair<string, List<SmartDevice>> GetAllLights()
     {
-        foreach (Yeelight light in this.Yeelights)
+        List<SmartDevice> lights = new List<SmartDevice>(); 
+        foreach (SmartDevice light in this.Config.Devices
+                     .Where(device => device.Type == SmartDeviceType.Light))
         {
-            if (light != null)
-                await light.UpdateState();
+            lights.Add(light);
         }
-        this.RefreshDisabled = false;
-        await InvokeAsync(StateHasChanged);
+
+        return new KeyValuePair<string, List<SmartDevice>>("All", lights);
     }
 }

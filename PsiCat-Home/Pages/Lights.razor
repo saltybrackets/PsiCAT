@@ -5,21 +5,27 @@
 @inject PsiCatClient Client
 @inject SmartDevicesPlugin SmartDevices
 
-<h3>Lights</h3>
-<button type="button" @onclick="Refresh" disabled="@RefreshDisabled">
-    <span class="oi oi-reload"></span>
-    Refresh
-</button>
+<h3>Smart Lights</h3>
 
-<div>
-    <ul>
-        @foreach (SmartDevice light in Config.Devices
-            .Where(device => device.Type == SmartDeviceType.Light))
-        {
-            <li><Yeelight SmartDevice="light" @ref="@yeelightElement" /></li>
-        }
-    </ul>    
-</div>
+<TabControl>
+    <button type="button" @onclick="Refresh" disabled="@RefreshDisabled">
+        <span class="oi oi-reload"></span>
+        Refresh
+    </button>
+    
+    <TabPage Label="All">
+        <LightGroup LightGroupConfig="@GetAllLights()" @ref="@LightGroupElement" />
+    </TabPage>
+    @foreach (KeyValuePair<string, List<SmartDevice>> entry in Config.SmartLightGroups)
+    {
+        <TabPage Label="@entry.Key">
+            <LightGroup LightGroupConfig="@entry" @ref="@LightGroupElement" />
+        </TabPage>
+    }
+    <TabPage Label="+">
+        <h3>Create New Smart Light Device Group</h3>
+    </TabPage>
+</TabControl>
 
 <footer>
     <TextConsole Contents="@(Client.Logger as IConsoleContents)" Rows="1" />

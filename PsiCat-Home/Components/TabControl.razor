@@ -1,0 +1,19 @@
+@namespace PsiCat.Home
+
+<div class="btn-group" role="group">
+    @foreach (TabPage tabPage in this.Pages)
+    {
+        <button type="button"
+                class="btn @GetButtonClass(tabPage)"
+                @onclick=@(() => ActivatePage(tabPage))>
+            @tabPage.Label
+        </button>
+    }
+</div>
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+
+

@@ -14,6 +14,9 @@ namespace PsiCat.SmartDevices
 
         public List<SmartDevice> Devices = new List<SmartDevice>();
 
+        public Dictionary<string, List<SmartDevice>> SmartLightGroups = 
+            new Dictionary<string, List<SmartDevice>>();
+
         public override void Save(string filePath = null)
         {
             if (filePath == null)

@@ -1,0 +1,19 @@
+@namespace PsiCat.Home
+
+@using PsiCat.SmartDevices
+@inject PsiCatClient Client
+@inject SmartDevicesPlugin SmartDevices
+
+<div>
+    <h4>@this.LightGroupConfig.Key</h4>
+    
+    <div>
+        <ul>
+            @foreach (SmartDevice light in this.LightGroupConfig.Value)
+            {
+                <li><Yeelight SmartDevice="light" @ref="@YeelightElement"/></li>
+            }
+        </ul>
+    </div>
+</div>
+

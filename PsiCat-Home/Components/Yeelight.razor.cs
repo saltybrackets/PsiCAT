@@ -80,7 +80,6 @@ public partial class Yeelight : ComponentBase
         
         if (brightness > 0)
         {
-            await this.Light.TurnOn();
             await this.Light.SetHSVColor(hue, saturation);
         }
         else
