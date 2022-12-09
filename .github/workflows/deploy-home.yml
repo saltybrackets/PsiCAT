@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Restore dependencies
-      run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release ./PsiCat-Home/PsiCat-Home.csproj
+    - name: Publish
+      run: dotnet publish -c Release -o /var/www/psicat-home ./PsiCat-Home/PsiCat-Home.csproj

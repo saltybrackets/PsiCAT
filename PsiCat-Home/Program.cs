@@ -1,6 +1,7 @@
 namespace PsiCat.Home
 {
     using Microsoft.AspNetCore.Authentication.Negotiate;
+    using Microsoft.AspNetCore.HttpOverrides;
     using NLog;
     using NLog.Web;
     using PsiCat;
@@ -90,7 +91,12 @@ namespace PsiCat.Home
             webApplication.UseRouting();
             webApplication.MapBlazorHub();
             webApplication.MapFallbackToPage("/_Host");
-            
+            webApplication.UseForwardedHeaders(
+                new ForwardedHeadersOptions
+                    {
+                        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                    });
+
             // Authentication
             //webApplication.UseAuthentication();
             //webApplication.UseAuthorization();
