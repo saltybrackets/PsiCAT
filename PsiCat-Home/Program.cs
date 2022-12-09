@@ -85,7 +85,7 @@ namespace PsiCat.Home
                 webApplication.UseHsts();
             }
 
-            webApplication.UseHttpsRedirection();
+            // webApplication.UseHttpsRedirection();
             webApplication.UseStaticFiles();
             webApplication.UseRouting();
             webApplication.MapBlazorHub();
