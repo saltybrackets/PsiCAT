@@ -23,7 +23,7 @@ namespace PsiCat.SmartDevices
         {
             this.IsLocating = true;
             this.Lights.Clear();
-            DeviceLocator.UseAllAvailableMulticastAddresses = true;
+            //DeviceLocator.UseAllAvailableMulticastAddresses = true;
             
             IEnumerable<YeelightDevice> foundLights = await DeviceLocator.DiscoverAsync();
 

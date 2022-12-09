@@ -87,6 +87,12 @@ namespace PsiCat.Home
             }
 
             // webApplication.UseHttpsRedirection();
+            webApplication.UseStaticFiles(
+                new StaticFileOptions
+                    {
+                        ServeUnknownFileTypes = true,
+                        DefaultContentType = "application/octet-stream"
+                    });
             webApplication.UseStaticFiles();
             webApplication.UseRouting();
             webApplication.MapBlazorHub();
