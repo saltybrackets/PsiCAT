@@ -23,6 +23,6 @@ jobs:
       continue-on-error: true
       run: sudo /usr/bin/systemctl stop psicat-home.service
     - name: Publish
-      run: dotnet publish -c Release -o /var/www/psicat-home ./PsiCat-Home/PsiCat-Home.csproj
+      run: dotnet publish -c Release -o /var/www/html ./PsiCat-Home/PsiCat-Home.csproj
     - name: Start PsiCAT Home Service
       run: sudo /usr/bin/systemctl start psicat-home.service
