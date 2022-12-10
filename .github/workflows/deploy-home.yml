@@ -20,7 +20,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release ./PsiCat-Home/PsiCat-Home.csproj
     - name: Stop PsiCAT Home Service
-      run: sudo systemctl stop psicat-home.service
+      run: sudo systemctl stop psicat-home.service 2>&1 >/dev/null
     - name: Publish
       run: dotnet publish -c Release -o /var/www/psicat-home ./PsiCat-Home/PsiCat-Home.csproj
     - name: Start PsiCAT Home Service
