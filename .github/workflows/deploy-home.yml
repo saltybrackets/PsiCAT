@@ -19,5 +19,9 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build
       run: dotnet build --configuration Release ./PsiCat-Home/PsiCat-Home.csproj
+    - name: Stop PsiCAT Home Service
+      run: sudo systemctl stop psicat-home.service
     - name: Publish
       run: dotnet publish -c Release -o /var/www/psicat-home ./PsiCat-Home/PsiCat-Home.csproj
+    - name: Start PsiCAT Home Service
+      run: sudo systemctl start psicat-home.service
