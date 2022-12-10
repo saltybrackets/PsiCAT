@@ -1,5 +1,6 @@
 namespace PsiCat.SmartDevices
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -23,11 +24,12 @@ namespace PsiCat.SmartDevices
         {
             this.IsLocating = true;
             this.Lights.Clear();
-            //DeviceLocator.UseAllAvailableMulticastAddresses = true;
             
+            DeviceLocator.UseAllAvailableMulticastAddresses = true;
             IEnumerable<YeelightDevice> foundLights = await DeviceLocator.DiscoverAsync();
 
-            YeelightDevice[] lights = foundLights as YeelightDevice[] ?? foundLights.ToArray();
+            YeelightDevice[] lights = foundLights.ToArray();
+            
             if (lights.Length == 0)
             {
                 this.Logger.Log("No lights found.");
