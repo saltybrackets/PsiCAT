@@ -68,7 +68,8 @@ namespace PsiCat.SmartDevices
             }
             config.Save(SmartDevicesConfig.DefaultFilePath);
 
-            await this.SmartLights.ConnectToAll();
+            if (this.SmartLights.Lights.Count > 0)
+                await this.SmartLights.ConnectToAll();
         }
 
 

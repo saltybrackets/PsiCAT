@@ -58,16 +58,20 @@ public partial class Lights : ComponentBase
         await InvokeAsync(StateHasChanged);
         
         await this.SmartDevices.SmartLights.LocateAll();
-        await this.SmartDevices.SmartLights.ConnectToAll();
-        
-        foreach (LightGroup lightGroup in this.LightGroups)
+
+        if (this.SmartDevices.SmartLights.Lights.Count > 0)
         {
-            foreach (Yeelight light in lightGroup.Yeelights)
-            {
-                await light.UpdateState();
-            }
-        }
+            await this.SmartDevices.SmartLights.ConnectToAll();
         
+            foreach (LightGroup lightGroup in this.LightGroups)
+            {
+                foreach (Yeelight light in lightGroup.Yeelights)
+                {
+                    await light.UpdateState();
+                }
+            }    
+        }
+
         this.RefreshDisabled = false;
         await InvokeAsync(StateHasChanged);
         
