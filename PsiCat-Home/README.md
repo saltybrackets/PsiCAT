@@ -2,11 +2,12 @@
 A web interface for PsiCAT, utilizing server-side Blazor.
 
 ## Deployment
-Instructions assume `dotnet` and `nginx` are installed already on a host Linux machine. For a non-nginx setup or different OS, you should consult official Blazor documentation.
+ - Instructions assume `dotnet` and `nginx` are installed already on a host Linux machine. For a non-nginx setup or different OS, you should consult official Blazor documentation.
 
-Built project should be placed wherever web content is served (eg: `/var/www/html`)
+ - Built project should be placed wherever web content is served (eg: `/var/www/html`)
 
-### Basic nginx /etc/nginx/sites-available/default
+### Example Nginx Site Config: /etc/nginx/sites-available/default
+**Warning:** This is for just a basic non-secure HTTP listener.
 ```
 server {
     listen        80;
@@ -24,7 +25,7 @@ server {
 }
 ```
 
-### Basic service /etc/systemd/psicat-home.service
+### Example systemctl Service: /etc/systemd/psicat-home.service
 ```
 [Unit]
 Description=PsiCAT Home
