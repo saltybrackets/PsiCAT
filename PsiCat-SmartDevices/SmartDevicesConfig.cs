@@ -2,6 +2,7 @@ namespace PsiCat.SmartDevices
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
     using System.Reflection;
 
@@ -13,6 +14,9 @@ namespace PsiCat.SmartDevices
                                                         + "/smart-devices-config.json";
 
         public bool UseAllAvailableMulticastAddresses = false;
+        
+        [DefaultValue(500)]
+        public int DeviceConnectionTimeout = 500;
         
         public List<SmartDevice> Devices = new List<SmartDevice>();
 

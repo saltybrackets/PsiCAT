@@ -13,5 +13,8 @@ namespace PsiCat.SmartDevices
         
         [JsonConverter(typeof(StringEnumConverter))]
         public SmartDeviceType Type { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SmartDeviceManufacturer Manufacturer { get; set; }
     }
 }

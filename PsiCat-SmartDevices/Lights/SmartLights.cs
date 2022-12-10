@@ -37,14 +37,20 @@ namespace PsiCat.SmartDevices
             int successes = 0;
             foreach (ISmartLight smartLight in this.Lights.Values)
             {
-                if (await smartLight.Connect())
+                if (smartLight.Connect().Wait(this.Config.DeviceConnectionTimeout))
+                {
                     successes++;
+                    if (this.Logger != null)
+                        this.Logger.Log($"Connected to smart light: {smartLight.IP}");
+                }
                 else if (this.Logger != null)
-                    this.Logger.Log($"Failed to connect to smart light on {smartLight.IP}");
+                {
+                    this.Logger.Log($"Failed to connect to smart light: {smartLight.IP}");
+                }
             }
             
             if (this.Logger != null)
-                this.Logger.Log($"Successfully connected to {successes} smart lights.");
+                this.Logger.Log($"Connected to {successes} total smart lights.");
         }
 
 
@@ -66,7 +72,7 @@ namespace PsiCat.SmartDevices
             }
             
             if (this.Logger != null)
-                this.Logger.Log($"Found {smartLights.Count} smart lights in total.");
+                this.Logger.Log($"Loaded {smartLights.Count} smart lights in total.");
             
             this.IsLocating = false;
             return smartLights;
@@ -76,25 +82,39 @@ namespace PsiCat.SmartDevices
         private async Task<IEnumerable<ISmartLight>> LocateYeelights()
         {
             List<ISmartLight> smartLights = new List<ISmartLight>();
+
+            // Try to discover lights on network first.
             DeviceLocator.UseAllAvailableMulticastAddresses = this.Config.UseAllAvailableMulticastAddresses;
-            YeelightDevice[] yeelights = (await DeviceLocator.DiscoverAsync()).ToArray();
-
-            if (!yeelights.Any())
-            {
-                if (this.Logger != null)
-                    this.Logger.Log("No Yeelights found.");
-                return smartLights;
-            }
-
+            List<YeelightDevice> yeelights = (await DeviceLocator.DiscoverAsync()).ToList();
             foreach (YeelightDevice yeelight in yeelights)
             {
-                if (this.Logger != null)
-                    this.Logger.Log($"Found Yeelight: {yeelight.Model} on {yeelight.Hostname}");
-                smartLights.Add(new YeelightSmartLightAdapter(yeelight));
+                this.Logger.Log($"Discovered Yeelight: {yeelight.Model} on {yeelight.Hostname}");
             }
 
-            if (this.Logger != null)
-                this.Logger.Log($"Found {smartLights.Count} total Yeelights.");
+            // Add undiscovered lights remaining in config.
+            IEnumerable<SmartDevice> configuredLights = this.Config.Devices.Where(
+                device =>
+                    device.Type == SmartDeviceType.Light
+                    && device.Manufacturer == SmartDeviceManufacturer.Yeelight);
+            foreach (SmartDevice configuredLight in configuredLights)
+            {
+                bool alreadyAdded = yeelights
+                    .Any(device => device.Hostname == configuredLight.IP);
+                
+                if (!alreadyAdded)
+                {
+                    YeelightDevice yeelight = new YeelightDevice(configuredLight.IP);
+                    yeelights.Add(yeelight);
+                    if (this.Logger != null)
+                        this.Logger.Log($"Loaded undiscovered Yeelight from config: {yeelight.Hostname}");
+                }
+            }
+
+            // Adapt loaded Yeelights to ISmartLights
+            foreach (YeelightDevice yeelight in yeelights)
+            {
+                smartLights.Add(new YeelightSmartLightAdapter(yeelight));
+            }
             
             return smartLights;
         }
