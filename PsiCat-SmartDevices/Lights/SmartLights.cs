@@ -9,44 +9,94 @@ namespace PsiCat.SmartDevices
 
     public class SmartLights
     {
-        public ILogger Logger { get; set; }
+        public SmartLights(SmartDevicesConfig config)
+        {
+            this.Config = config;
+        }
+
+
+        public SmartDevicesConfig Config { get; }
+
+        public bool IsLocating { get; set; }
 
         // IP : YeelightDevice
-        public Dictionary<string, YeelightDevice> Lights { get; } = 
-            new Dictionary<string, YeelightDevice>();
+        public Dictionary<string, ISmartLight> Lights { get; } = 
+            new Dictionary<string, ISmartLight>();
+
+        public ILogger Logger { get; set; }
 
         private Dictionary<string, DeviceGroup> LightGroups { get; set; } = 
             new Dictionary<string, DeviceGroup>();
-        
-        public bool IsLocating { get; set; }
-        
-        public async Task LocateAll(SmartDevicesConfig config = null)
+
+
+        public async Task ConnectToAll()
+        {
+            if (this.Logger != null)
+                this.Logger.Log($"Attempting connection to {this.Lights.Count} smart lights...");
+            
+            int successes = 0;
+            foreach (ISmartLight smartLight in this.Lights.Values)
+            {
+                if (await smartLight.Connect())
+                    successes++;
+                else if (this.Logger != null)
+                    this.Logger.Log($"Failed to connect to smart light on {smartLight.IP}");
+            }
+            
+            if (this.Logger != null)
+                this.Logger.Log($"Successfully connected to {successes} smart lights.");
+        }
+
+
+        public async Task<IEnumerable<ISmartLight>> LocateAll()
         {
             this.IsLocating = true;
             this.Lights.Clear();
-            
-            DeviceLocator.UseAllAvailableMulticastAddresses = true;
-            IEnumerable<YeelightDevice> foundLights = await DeviceLocator.DiscoverAsync();
 
-            YeelightDevice[] lights = foundLights.ToArray();
-            
-            if (lights.Length == 0)
-            {
-                this.Logger.Log("No lights found.");
-                return;
-            }
+            List<ISmartLight> smartLights = new List<ISmartLight>();
 
-            foreach (YeelightDevice light in lights)
+            IEnumerable<ISmartLight> yeelights = await LocateYeelights(); 
+            
+            // Aggregate all discovered lights
+            smartLights.AddRange(yeelights);
+
+            foreach (ISmartLight smartLight in smartLights)
             {
-                this.Logger.Log($"Found Light: {light.Model} on {light.Hostname}");
-                this.Lights.Add(light.Hostname, light);
-                await light.Connect();
-                if (config != null)
-                    light.ApplyToConfig(config);
+                this.Lights.Add(smartLight.IP, smartLight);    
             }
-			
-            this.Logger.Log($"Found {this.Lights.Count} lights.");
+            
+            if (this.Logger != null)
+                this.Logger.Log($"Found {smartLights.Count} smart lights in total.");
+            
             this.IsLocating = false;
+            return smartLights;
+        }
+
+
+        private async Task<IEnumerable<ISmartLight>> LocateYeelights()
+        {
+            List<ISmartLight> smartLights = new List<ISmartLight>();
+            DeviceLocator.UseAllAvailableMulticastAddresses = this.Config.UseAllAvailableMulticastAddresses;
+            YeelightDevice[] yeelights = (await DeviceLocator.DiscoverAsync()).ToArray();
+
+            if (!yeelights.Any())
+            {
+                if (this.Logger != null)
+                    this.Logger.Log("No Yeelights found.");
+                return smartLights;
+            }
+
+            foreach (YeelightDevice yeelight in yeelights)
+            {
+                if (this.Logger != null)
+                    this.Logger.Log($"Found Yeelight: {yeelight.Model} on {yeelight.Hostname}");
+                smartLights.Add(new YeelightSmartLightAdapter(yeelight));
+            }
+
+            if (this.Logger != null)
+                this.Logger.Log($"Found {smartLights.Count} total Yeelights.");
+            
+            return smartLights;
         }
     }
 }

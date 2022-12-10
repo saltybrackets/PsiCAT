@@ -12,6 +12,8 @@ namespace PsiCat.SmartDevices
         public static readonly string DefaultFilePath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}"
                                                         + "/smart-devices-config.json";
 
+        public bool UseAllAvailableMulticastAddresses = false;
+        
         public List<SmartDevice> Devices = new List<SmartDevice>();
 
         public Dictionary<string, List<SmartDevice>> SmartLightGroups = 

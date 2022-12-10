@@ -1,6 +1,7 @@
 namespace PsiCat.SmartDevices
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
@@ -51,12 +52,23 @@ namespace PsiCat.SmartDevices
         {
             LoadConfig();
 
-            this.SmartLights = new SmartLights();
-            this.SmartLights.Logger = this.Logger;
+            SmartDevicesConfig config = (SmartDevicesConfig)this.Config;
             
-            await this.SmartLights.LocateAll(this.Config as SmartDevicesConfig);
+            this.SmartLights = 
+                new SmartLights((SmartDevicesConfig)this.Config)
+                    {
+                        Logger = this.Logger
+                    };
+
+            IEnumerable<ISmartLight> smartLights = await this.SmartLights.LocateAll();
             
-            this.Config.Save(SmartDevicesConfig.DefaultFilePath);
+            foreach (ISmartLight smartLight in smartLights)
+            {
+                smartLight.ApplyToConfig(config);
+            }
+            config.Save(SmartDevicesConfig.DefaultFilePath);
+
+            await this.SmartLights.ConnectToAll();
         }
 
 

@@ -43,6 +43,8 @@ public partial class Lights : ComponentBase
 
     private async void Refresh()
     {
+        this.SmartDevices.Logger.Log("Syncing with smart lights...");
+        
         this.RefreshDisabled = true;
 
         foreach (LightGroup lightGroup in this.LightGroups)
@@ -56,6 +58,7 @@ public partial class Lights : ComponentBase
         await InvokeAsync(StateHasChanged);
         
         await this.SmartDevices.SmartLights.LocateAll();
+        await this.SmartDevices.SmartLights.ConnectToAll();
         
         foreach (LightGroup lightGroup in this.LightGroups)
         {
@@ -67,6 +70,8 @@ public partial class Lights : ComponentBase
         
         this.RefreshDisabled = false;
         await InvokeAsync(StateHasChanged);
+        
+        this.SmartDevices.Logger.Log("Finished syncing with smart lights.");
     }
 
 
