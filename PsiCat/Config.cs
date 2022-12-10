@@ -19,7 +19,12 @@ namespace PsiCat
                 json = streamReader.ReadToEnd();
             }
 
-            T deserializedObject = JsonConvert.DeserializeObject<T>(json);
+            // Use default value for missing properties.
+            JsonSerializerSettings configReadSettings = new JsonSerializerSettings();
+            configReadSettings.DefaultValueHandling = DefaultValueHandling.Populate;
+            configReadSettings.NullValueHandling = NullValueHandling.Ignore;
+            
+            T deserializedObject = JsonConvert.DeserializeObject<T>(json, configReadSettings);
             return deserializedObject;
         }
         
