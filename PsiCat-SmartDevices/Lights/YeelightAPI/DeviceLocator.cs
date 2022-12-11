@@ -205,8 +205,9 @@ namespace YeelightAPI
                                               }
                                           }
                                       }
-                                      catch (SocketException)
+                                      catch (SocketException e)
                                       {
+                                          Console.WriteLine($"EXCEPTION: {e}");
                                           // Continue polling
                                       }
 
@@ -216,8 +217,9 @@ namespace YeelightAPI
                                   stopWatch.Stop();
                               }
                           }
-                          catch (SocketException)
+                          catch (SocketException e)
                           {
+                              Console.WriteLine($"EXCEPTION: {e}");
                               return devices.Values.ToList();
                           }
                           finally
@@ -352,8 +354,9 @@ namespace YeelightAPI
                             DeviceLocator.GetDevicesFromSocket(multicastIPEndpoint, deviceFoundCallback, ssdpSocket, devices);
                         }
                     }
-                    catch (SocketException ex)
+                    catch (SocketException e)
                     {
+                        Console.WriteLine($"EXCEPTION: {e}");
                         //return devices.Values.ToList();
                     }
                 }
@@ -410,8 +413,9 @@ namespace YeelightAPI
                             }
                         }
                     }
-                    catch (SocketException)
+                    catch (SocketException e)
                     {
+                        Console.WriteLine($"EXCEPTION: {e}");
                         // Ignore SocketException and continue polling
                     }
 
