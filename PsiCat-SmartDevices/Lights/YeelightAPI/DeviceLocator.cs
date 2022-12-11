@@ -368,7 +368,7 @@ namespace YeelightAPI
             ssdpSocket.Ttl = 2;
             ssdpSocket.UseOnlyOverlappedIO = true;
             ssdpSocket.MulticastLoopback = false;
-            ssdpSocket.Bind(new IPEndPoint(ip.Address, 0));
+            ssdpSocket.Bind(new IPEndPoint(ip.Address, 1982));
             ssdpSocket.SetSocketOption(
               SocketOptionLevel.IP,
               SocketOptionName.AddMembership,
