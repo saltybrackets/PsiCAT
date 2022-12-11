@@ -15,8 +15,8 @@ namespace PsiCat.SmartDevices
 
         public bool UseAllAvailableMulticastAddresses = false;
         
-        [DefaultValue(500)]
-        public int DeviceConnectionTimeout = 500;
+        [DefaultValue(1000)]
+        public int DeviceConnectionTimeout = 1000;
         
         public List<SmartDevice> Devices = new List<SmartDevice>();
 
