@@ -13,8 +13,6 @@ namespace PsiCat.SmartDevices
         public static readonly string DefaultFilePath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}"
                                                         + "/smart-devices-config.json";
 
-        public bool UseAllAvailableMulticastAddresses = false;
-        
         [DefaultValue(1000)]
         public int DeviceConnectionTimeout = 1000;
         

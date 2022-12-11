@@ -102,7 +102,6 @@ namespace PsiCat.SmartDevices
             List<ISmartLight> smartLights = new List<ISmartLight>();
 
             // Try to discover lights on network first.
-            DeviceLocator.UseAllAvailableMulticastAddresses = this.Config.UseAllAvailableMulticastAddresses;
             List<YeelightDevice> yeelights = (await DeviceLocator.DiscoverAsync()).ToList();
             foreach (YeelightDevice yeelight in yeelights)
             {
