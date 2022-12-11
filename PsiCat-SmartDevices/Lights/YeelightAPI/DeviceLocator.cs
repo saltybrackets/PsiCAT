@@ -205,10 +205,8 @@ namespace YeelightAPI
                                               }
                                           }
                                       }
-                                      catch (SocketException e)
+                                      catch (SocketException)
                                       {
-                                          Console.WriteLine($"EXCEPTION: {e}");
-                                          throw;
                                           // Continue polling
                                       }
 
@@ -218,10 +216,8 @@ namespace YeelightAPI
                                   stopWatch.Stop();
                               }
                           }
-                          catch (SocketException e)
+                          catch (SocketException)
                           {
-                              Console.WriteLine($"EXCEPTION: {e}");
-                              throw;
                               return devices.Values.ToList();
                           }
                           finally
@@ -356,10 +352,8 @@ namespace YeelightAPI
                             DeviceLocator.GetDevicesFromSocket(multicastIPEndpoint, deviceFoundCallback, ssdpSocket, devices);
                         }
                     }
-                    catch (SocketException e)
+                    catch (SocketException)
                     {
-                        Console.WriteLine($"EXCEPTION: {e}");
-                        throw;
                         //return devices.Values.ToList();
                     }
                 }
@@ -371,7 +365,7 @@ namespace YeelightAPI
         private static void InitializeSocket(IPEndPoint multicastIPEndpoint, UnicastIPAddressInformation ip, Socket ssdpSocket)
         {
             ssdpSocket.Blocking = false;
-            ssdpSocket.Ttl = 1;
+            ssdpSocket.Ttl = 2;
             ssdpSocket.UseOnlyOverlappedIO = true;
             ssdpSocket.MulticastLoopback = false;
             ssdpSocket.Bind(new IPEndPoint(ip.Address, 0));
@@ -416,10 +410,8 @@ namespace YeelightAPI
                             }
                         }
                     }
-                    catch (SocketException e)
+                    catch (SocketException)
                     {
-                        Console.WriteLine($"EXCEPTION: {e}");
-                        throw;
                         // Ignore SocketException and continue polling
                     }
 
