@@ -208,6 +208,7 @@ namespace YeelightAPI
                                       catch (SocketException e)
                                       {
                                           Console.WriteLine($"EXCEPTION: {e}");
+                                          throw;
                                           // Continue polling
                                       }
 
@@ -220,6 +221,7 @@ namespace YeelightAPI
                           catch (SocketException e)
                           {
                               Console.WriteLine($"EXCEPTION: {e}");
+                              throw;
                               return devices.Values.ToList();
                           }
                           finally
@@ -357,6 +359,7 @@ namespace YeelightAPI
                     catch (SocketException e)
                     {
                         Console.WriteLine($"EXCEPTION: {e}");
+                        throw;
                         //return devices.Values.ToList();
                     }
                 }
@@ -416,6 +419,7 @@ namespace YeelightAPI
                     catch (SocketException e)
                     {
                         Console.WriteLine($"EXCEPTION: {e}");
+                        throw;
                         // Ignore SocketException and continue polling
                     }
 
