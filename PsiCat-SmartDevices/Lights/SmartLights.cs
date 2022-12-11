@@ -3,6 +3,9 @@ namespace PsiCat.SmartDevices
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Text;
     using System.Threading.Tasks;
     using YeelightAPI;
 
@@ -37,6 +40,9 @@ namespace PsiCat.SmartDevices
             int successes = 0;
             foreach (ISmartLight smartLight in this.Lights.Values)
             {
+                if (await smartLight.IsConnected())
+                    continue;
+                
                 if (smartLight.Connect().Wait(this.Config.DeviceConnectionTimeout))
                 {
                     successes++;
@@ -51,6 +57,18 @@ namespace PsiCat.SmartDevices
             
             if (this.Logger != null)
                 this.Logger.Log($"Connected to {successes} total smart lights.");
+        }
+
+
+        public async void DisconnectAll()
+        {
+            foreach (ISmartLight smartLight in this.Lights.Values)
+            {
+                await smartLight.Disconnect();
+            }
+            
+            if (this.Logger != null)
+                this.Logger.Log($"Disconnected from all smart lights.");
         }
 
 
@@ -113,7 +131,8 @@ namespace PsiCat.SmartDevices
             // Adapt loaded Yeelights to ISmartLights
             foreach (YeelightDevice yeelight in yeelights)
             {
-                smartLights.Add(new YeelightSmartLightAdapter(yeelight));
+                YeelightSmartLightAdapter adaptedYeelight = new YeelightSmartLightAdapter(yeelight);
+                smartLights.Add(adaptedYeelight);
             }
             
             return smartLights;

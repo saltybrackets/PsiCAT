@@ -115,7 +115,8 @@ public partial class Yeelight : ComponentBase
             .AppendLine($"**Name:** {details.Name}")
             .AppendLine($"**Model:** {details.Model}")
             .AppendLine($"**IP:** {details.IP}")
-            .AppendLine($"**Port:** {details.Port}");
+            .AppendLine($"**Port:** {details.Port}")
+            .AppendLine($"**Other:** ```{details.Other.ToString()}```");
 
         this.popup.Show(bodyText.ToString(), $"Smart Light Details");
     }

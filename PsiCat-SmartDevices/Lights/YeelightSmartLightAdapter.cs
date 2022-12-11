@@ -4,6 +4,7 @@ namespace PsiCat.SmartDevices
     using System.Drawing;
     using System.Linq;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using YeelightAPI;
     using YeelightAPI.Models;
 
@@ -46,6 +47,16 @@ namespace PsiCat.SmartDevices
         public async Task<bool> Connect()
         {
             return await this.yeelightDevice.Connect();
+        }
+
+
+        public Task<bool> Disconnect()
+        {
+            if (!this.yeelightDevice.IsConnected)
+                return Task.FromResult(false);
+            
+            this.yeelightDevice.Disconnect();
+            return Task.FromResult(true);
         }
 
 
@@ -99,7 +110,8 @@ namespace PsiCat.SmartDevices
                         IP = this.IP,
                         Model = this.yeelightDevice.Model.ToString(),
                         Name = this.yeelightDevice.Name,
-                        Port = this.yeelightDevice.Port
+                        Port = this.yeelightDevice.Port,
+                        Other = JsonConvert.SerializeObject(this.yeelightProps, Formatting.Indented) 
                     });
         }
 

@@ -6,5 +6,6 @@ namespace PsiCat.SmartDevices
         public string Model;
         public string IP;
         public int Port;
+        public object Other;
     }
 }

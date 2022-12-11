@@ -10,6 +10,7 @@ namespace PsiCat.SmartDevices
         void ApplyToConfig(SmartDevicesConfig config);
 
         Task<bool> Connect();
+        Task<bool> Disconnect();
         Task<int> GetBrightness();
         Task<Color> GetColor();
         Task<SmartLightDetails> GetDetails();

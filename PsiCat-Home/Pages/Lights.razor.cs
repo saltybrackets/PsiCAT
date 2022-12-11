@@ -57,6 +57,7 @@ public partial class Lights : ComponentBase
         
         await InvokeAsync(StateHasChanged);
         
+        this.SmartDevices.SmartLights.DisconnectAll();
         await this.SmartDevices.SmartLights.LocateAll();
 
         if (this.SmartDevices.SmartLights.Lights.Count > 0)
