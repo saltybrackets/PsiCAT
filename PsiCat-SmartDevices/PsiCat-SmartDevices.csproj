@@ -4,7 +4,7 @@
         <TargetFramework>netcoreapp3.0</TargetFramework>
         <LangVersion>7.1</LangVersion>
         <RootNamespace>PsiSmartLight</RootNamespace>
-        <Company>Zachary White</Company>
+        <Company>Salty Brackets</Company>
         <Product>PsiCAT Smart Devices</Product>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>

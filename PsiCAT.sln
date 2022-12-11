@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Jira", "PsiCat-Jira\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Home", "PsiCat-Home\PsiCat-Home.csproj", "{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCat-Tests", "PsiCat-Tests\PsiCat-Tests.csproj", "{50E905BA-3BDF-45EA-8412-4BFBE047F27A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA18BD17-2A52-4CD4-8669-79999C9FE5A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50E905BA-3BDF-45EA-8412-4BFBE047F27A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E905BA-3BDF-45EA-8412-4BFBE047F27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E905BA-3BDF-45EA-8412-4BFBE047F27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E905BA-3BDF-45EA-8412-4BFBE047F27A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
