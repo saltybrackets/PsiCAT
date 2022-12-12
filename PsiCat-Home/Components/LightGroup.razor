@@ -5,13 +5,16 @@
 @inject SmartDevicesPlugin SmartDevices
 
 <div>
-    <h4>@this.LightGroupConfig.Key</h4>
-    
+    <div class="col-md-12 d-flex">
+        <h4>@LightGroupConfig.Key</h4>
+        <Light SmartLight="@SmartLightGroup" @ref="@GroupLightElement" />
+    </div>
+        
     <div>
         <ul>
-            @foreach (SmartDevice light in this.LightGroupConfig.Value)
+            @foreach (SmartDevice light in LightGroupConfig.Value)
             {
-                <li><Yeelight SmartDevice="light" @ref="@YeelightElement"/></li>
+                <li><Light SmartLight="@GetLight(light)" @ref="@LightElement"/></li>
             }
         </ul>
     </div>

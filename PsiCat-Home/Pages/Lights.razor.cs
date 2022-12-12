@@ -29,7 +29,7 @@ public partial class Lights : ComponentBase
         {
             foreach (LightGroup lightGroup in this.LightGroups)
             {
-                foreach (Yeelight light in lightGroup.Yeelights)
+                foreach (Light light in lightGroup.Lights)
                 {
                     await light.UpdateState();
                 }
@@ -49,7 +49,7 @@ public partial class Lights : ComponentBase
 
         foreach (LightGroup lightGroup in this.LightGroups)
         {
-            foreach (Yeelight light in lightGroup.Yeelights)
+            foreach (Light light in lightGroup.Lights)
             {
                 light.IsDisabled = true;
             }
@@ -66,7 +66,7 @@ public partial class Lights : ComponentBase
         
             foreach (LightGroup lightGroup in this.LightGroups)
             {
-                foreach (Yeelight light in lightGroup.Yeelights)
+                foreach (Light light in lightGroup.Lights)
                 {
                     await light.UpdateState();
                 }

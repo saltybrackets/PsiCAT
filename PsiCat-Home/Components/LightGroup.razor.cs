@@ -9,14 +9,34 @@ public partial class LightGroup : ComponentBase
     [Parameter]
     public KeyValuePair<string, List<SmartDevice>> LightGroupConfig { get; set; }
 
+    public List<Light> Lights { get; set; } = new List<Light>();
+
     [Parameter]
     public bool Locked { get; set; } = false;
 
-    public List<Yeelight> Yeelights { get; set; } = new List<Yeelight>();
+    private Light GroupLightElement { get; set; }
 
-    private Yeelight YeelightElement
+    private Light LightElement
     {
-        set { this.Yeelights.Add(value); }
+        set { this.Lights.Add(value); }
+    }
+
+    private SmartLightGroup SmartLightGroup { get; set; } = new SmartLightGroup();
+
+    private SmartLights SmartLights
+    {
+        get { return this.SmartDevices.SmartLights; }
+    }
+
+
+    public ISmartLight GetLight(SmartDevice smartDevice)
+    {
+        if (smartDevice == null)
+            return null;
+        
+        return (!this.SmartLights.Lights.ContainsKey(smartDevice.IP) 
+                    ? null 
+                    : this.SmartLights.Lights[smartDevice.IP]);
     }
 
 
@@ -24,6 +44,10 @@ public partial class LightGroup : ComponentBase
     {
         if (firstRender)
         {
+            foreach (Light light in this.Lights)
+            {
+                this.SmartLightGroup.SmartLights.Add(light.SmartLight);
+            }
             UpdateState();
         }
         
@@ -33,7 +57,8 @@ public partial class LightGroup : ComponentBase
 
     private async void UpdateState()
     {
-        foreach (Yeelight light in this.Yeelights)
+        await this.GroupLightElement.UpdateState();
+        foreach (Light light in this.Lights)
         {
             if (light != null)
                 await light.UpdateState();
