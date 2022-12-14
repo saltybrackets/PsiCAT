@@ -5,7 +5,7 @@ name: .NET
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "develop" ]
     paths-ignore:
       - '*.md'
       - '.gitignore'
