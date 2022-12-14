@@ -1,11 +1,7 @@
 namespace PsiCat.SmartDevices
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text;
     using System.Threading.Tasks;
     using YeelightAPI;
 
@@ -18,20 +14,28 @@ namespace PsiCat.SmartDevices
         }
 
 
-        public SmartDevicesConfig Config { get; }
-
+        /// <summary>
+        /// Whether lights are currently being located.
+        /// </summary>
         public bool IsLocating { get; set; }
 
-        // IP : YeelightDevice
+        /// <summary>
+        /// All loaded smart lights, keyed on device IP.
+        /// </summary>
         public Dictionary<string, ISmartLight> Lights { get; } = 
             new Dictionary<string, ISmartLight>();
 
+        /// <summary>
+        /// Logging interface to use for logging.
+        /// </summary>
         public ILogger Logger { get; set; }
 
-        private Dictionary<string, DeviceGroup> LightGroups { get; set; } = 
-            new Dictionary<string, DeviceGroup>();
+        private SmartDevicesConfig Config { get; }
 
 
+        /// <summary>
+        /// Connect to all loaded smart lights.
+        /// </summary>
         public async Task ConnectToAll()
         {
             if (this.Logger != null)
@@ -65,6 +69,9 @@ namespace PsiCat.SmartDevices
         }
 
 
+        /// <summary>
+        /// Disconnected from all loaded smart lights.
+        /// </summary>
         public async void DisconnectAll()
         {
             foreach (ISmartLight smartLight in this.Lights.Values)
@@ -77,6 +84,10 @@ namespace PsiCat.SmartDevices
         }
 
 
+        /// <summary>
+        /// Load all available smart lights from network and configuration.
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<ISmartLight>> LocateAll()
         {
             this.IsLocating = true;
@@ -84,7 +95,7 @@ namespace PsiCat.SmartDevices
 
             List<ISmartLight> smartLights = new List<ISmartLight>();
 
-            IEnumerable<ISmartLight> yeelights = await LocateYeelightsOnNetwork(); 
+            IEnumerable<ISmartLight> yeelights = await FindAllYeelights(); 
             
             // Aggregate all discovered lights
             smartLights.AddRange(yeelights);
@@ -97,30 +108,6 @@ namespace PsiCat.SmartDevices
                 this.Logger.Log($"Loaded {smartLights.Count} total smart lights.");
             
             this.IsLocating = false;
-            return smartLights;
-        }
-
-
-        private async Task<IEnumerable<ISmartLight>> LocateYeelightsOnNetwork()
-        {
-            List<ISmartLight> smartLights = new List<ISmartLight>();
-
-            // Try to discover lights on network first.
-            List<YeelightDevice> yeelights = (await DeviceLocator.DiscoverAsync()).ToList();
-            foreach (YeelightDevice yeelight in yeelights)
-            {
-                this.Logger.Log($"Discovered Yeelight: {yeelight.Model} on {yeelight.Hostname}");
-            }
-
-            AddUndiscoveredYeelights(yeelights);
-
-            // Adapt Yeelights to ISmartLights
-            foreach (YeelightDevice yeelight in yeelights)
-            {
-                YeelightSmartLightAdapter adaptedYeelight = new YeelightSmartLightAdapter(yeelight);
-                smartLights.Add(adaptedYeelight);
-            }
-            
             return smartLights;
         }
 
@@ -152,6 +139,36 @@ namespace PsiCat.SmartDevices
             {
                 this.Logger.Log($"Loaded {undiscoveredLights} undiscovered Yeelights from config.");
             }
+        }
+
+
+        private async Task<List<YeelightDevice>> DiscoverNetworkYeelights()
+        {
+            List<YeelightDevice> yeelights = (await DeviceLocator.DiscoverAsync()).ToList();
+            foreach (YeelightDevice yeelight in yeelights)
+            {
+                this.Logger.Log($"Discovered Yeelight: {yeelight.Model} on {yeelight.Hostname}");
+            }
+
+            return yeelights;
+        }
+
+
+        private async Task<IEnumerable<ISmartLight>> FindAllYeelights()
+        {
+            List<ISmartLight> smartLights = new List<ISmartLight>();
+
+            List<YeelightDevice> yeelights = await DiscoverNetworkYeelights();
+            AddUndiscoveredYeelights(yeelights);
+
+            // Adapt Yeelights to ISmartLights
+            foreach (YeelightDevice yeelight in yeelights)
+            {
+                YeelightSmartLightAdapter adaptedYeelight = new YeelightSmartLightAdapter(yeelight);
+                smartLights.Add(adaptedYeelight);
+            }
+            
+            return smartLights;
         }
     }
 }

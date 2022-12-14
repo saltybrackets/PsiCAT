@@ -46,7 +46,7 @@ public partial class LightGroup : ComponentBase
         {
             foreach (Light light in this.Lights)
             {
-                this.SmartLightGroup.SmartLights.Add(light.SmartLight);
+                this.SmartLightGroup.Add(light.SmartLight);
             }
             UpdateState();
         }

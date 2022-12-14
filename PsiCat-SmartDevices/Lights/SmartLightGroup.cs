@@ -7,14 +7,17 @@ namespace PsiCat.SmartDevices
     using System.Threading.Tasks;
 
 
-    public class SmartLightGroup : ISmartLight
+    /// <summary>
+    /// Collection of smart lights that may be operated as a single unit.
+    /// </summary>
+    public class SmartLightGroup : List<ISmartLight>,
+                                   ISmartLight
+        
     {
         public string IP
         {
             get { return string.Empty; }
         }
-
-        public List<ISmartLight> SmartLights { get; } = new List<ISmartLight>();
 
 
         public void ApplyToConfig(SmartDevicesConfig config)
@@ -153,7 +156,7 @@ namespace PsiCat.SmartDevices
             bool result = true;
             List<Task<bool>> tasks = new List<Task<bool>>();
             
-            foreach (ISmartLight light in this.SmartLights)
+            foreach (ISmartLight light in this)
             {
                 if (light == null)
                     continue;
@@ -180,7 +183,7 @@ namespace PsiCat.SmartDevices
         private async Task<List<Task<T>>> GetInParallel<T>(Func<ISmartLight, Task<T>> getter)
         {
             List<Task<T>> tasks = new List<Task<T>>();
-            foreach (ISmartLight light in this.SmartLights)
+            foreach (ISmartLight light in this)
             {
                 if (light == null
                     || !await light.IsConnected())
