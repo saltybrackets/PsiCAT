@@ -3,6 +3,7 @@
 @page "/devices"
 @using PsiCat.SmartDevices
 @inject PsiCatClient Client
+@inject SmartDevicesPlugin SmartDevices
 
 <h3>Devices</h3>
 
@@ -33,36 +34,18 @@
     
     private bool FormUnchanged { get; set; }
     
-    private SmartDevicesConfig Config
-    {
-        get
-        {
-            return (SmartDevicesConfig)
-                   Client
-                       .Plugins["PsiCAT Smart Devices"]
-                       .Config;
-        }
-        set
-        {
-            Client
-                .Plugins["PsiCAT Smart Devices"]
-                .Config = value;
-        }
-    }
-    
-    
     protected override void OnInitialized()
     {
-        configChanges = PsiCat.Config.Clone(Config);
+        this.configChanges = PsiCat.Config.Clone(SmartDevices.Config);
         FormUnchanged = true;
     }
 
 
     private void SaveChanges()
     {
-        Config = configChanges;
-        Config.Save();
-        configChanges = PsiCat.Config.Clone(Config);
+        this.configChanges.Save();
+        this.SmartDevices.LoadConfig();
+        this.configChanges = PsiCat.Config.Clone(SmartDevices.Config);
         FormUnchanged = true;
     }
 

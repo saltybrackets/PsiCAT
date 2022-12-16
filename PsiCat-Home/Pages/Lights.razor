@@ -16,7 +16,7 @@
     <TabPage Label="All">
         <LightGroup LightGroupConfig="@GetAllLights()" @ref="@LightGroupElement" />
     </TabPage>
-    @foreach (SmartDeviceGroup entry in Config.GetDeviceGroupsOfType(SmartDeviceType.Light))
+    @foreach (SmartDeviceGroup entry in this.SmartDevices.Config.GetDeviceGroupsOfType(SmartDeviceType.Light))
     {
         <TabPage Label="@entry.Name">
             <LightGroup LightGroupConfig="@entry" @ref="@LightGroupElement" />

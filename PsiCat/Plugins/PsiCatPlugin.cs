@@ -8,7 +8,7 @@ namespace PsiCat.Plugins
         public abstract string Description { get; }
         public abstract string Author { get; }
         public abstract string Version { get; }
-        public abstract Config Config { get; set; }
+        public abstract Config Config { get; }
 
 
         public abstract void OnStart();

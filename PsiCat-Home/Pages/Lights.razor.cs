@@ -8,14 +8,6 @@ public partial class Lights : ComponentBase
 {
     private bool RefreshDisabled { get; set; } = false;
     
-    private SmartDevicesConfig Config
-    {
-        get
-        {
-            return (SmartDevicesConfig)this.SmartDevices.Config;
-        }
-    }
-    
     private LightGroup LightGroupElement
     {
         set { this.LightGroups.Add(value); }
@@ -85,7 +77,7 @@ public partial class Lights : ComponentBase
         SmartDeviceGroup allLightsGroup = new SmartDeviceGroup();
         allLightsGroup.Name = "All";
         allLightsGroup.GroupType = SmartDeviceType.Light;
-        foreach (SmartDevice light in this.Config.Devices
+        foreach (SmartDevice light in this.SmartDevices.Config.Devices
                      .Where(device => device.Type == SmartDeviceType.Light))
         {
             allLightsGroup.Add(light.IP);

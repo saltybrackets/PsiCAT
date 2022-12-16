@@ -1,8 +1,6 @@
 namespace PsiCat.Home;
 
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using PsiCat.SmartDevices;
 
 
@@ -16,20 +14,11 @@ public partial class SmartDeviceSelector : ComponentBase
     [Parameter]
     public string SelectedDeviceIP { get; set; }
 
-    private SmartDevicesConfig Config
-    {
-        get
-        {
-            return (SmartDevicesConfig)this.SmartDevices.Config;
-        }
-    }
-
-
     protected override void OnInitialized()
     {
         // Populate device list.
         this.smartDevices.Clear();
-        foreach (SmartDevice device in this.Config.Devices
+        foreach (SmartDevice device in this.SmartDevices.Config.Devices
                      .Where(device => device.Type == this.DeviceType))
         {
             this.smartDevices.Add(device);

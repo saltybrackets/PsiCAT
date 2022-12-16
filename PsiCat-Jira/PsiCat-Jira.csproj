@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>PsiCat.Jira</RootNamespace>
         <Company>Zachary White</Company>
         <Product>PsiCAT Jira</Product>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
