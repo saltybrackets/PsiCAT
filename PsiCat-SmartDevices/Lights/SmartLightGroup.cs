@@ -12,11 +12,26 @@ namespace PsiCat.SmartDevices
     /// </summary>
     public class SmartLightGroup : List<ISmartLight>,
                                    ISmartLight
-        
+
     {
         public string IP
         {
             get { return string.Empty; }
+        }
+
+        public string Name { get; set; }
+
+        public SmartDevice SmartDevice
+        {
+            get
+            {
+                return new SmartDevice
+                           {
+                               Name = this.Name,
+                               Type = SmartDeviceType.Light,
+                               IP = string.Empty
+                           };
+            }
         }
 
 

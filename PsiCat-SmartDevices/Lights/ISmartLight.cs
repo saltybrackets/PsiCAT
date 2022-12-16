@@ -7,8 +7,9 @@ namespace PsiCat.SmartDevices
     {
         string IP { get; }
 
-        void ApplyToConfig(SmartDevicesConfig config);
+        SmartDevice SmartDevice { get; }
 
+        void ApplyToConfig(SmartDevicesConfig config);
         Task<bool> Connect();
         Task<bool> Disconnect();
         Task<int> GetBrightness();

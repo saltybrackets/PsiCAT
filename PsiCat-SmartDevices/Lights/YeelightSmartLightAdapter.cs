@@ -15,9 +15,12 @@ namespace PsiCat.SmartDevices
         private Dictionary<PROPERTIES, object> yeelightProps;
 
 
-        public YeelightSmartLightAdapter(YeelightDevice yeelightDevice)
+        public YeelightSmartLightAdapter(
+            YeelightDevice yeelightDevice,
+            SmartDevice smartDevice)
         {
             this.yeelightDevice = yeelightDevice;
+            this.SmartDevice = smartDevice;
         }
 
 
@@ -25,6 +28,8 @@ namespace PsiCat.SmartDevices
         {
             get { return this.yeelightDevice.Hostname; }
         }
+
+        public SmartDevice SmartDevice { get; set; }
 
 
         public void ApplyToConfig(SmartDevicesConfig config)
@@ -113,6 +118,12 @@ namespace PsiCat.SmartDevices
                         Port = this.yeelightDevice.Port,
                         Other = JsonConvert.SerializeObject(this.yeelightProps, Formatting.Indented) 
                     });
+        }
+
+
+        public Task<string> GetName()
+        {
+            return  Task.FromResult(this.yeelightDevice.Name);
         }
 
 

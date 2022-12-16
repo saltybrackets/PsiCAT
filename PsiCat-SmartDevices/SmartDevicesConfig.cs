@@ -31,6 +31,14 @@ namespace PsiCat.SmartDevices
         }
 
 
+        public override void Save(string filePath = null)
+        {
+            if (filePath == null)
+                filePath = DefaultFilePath;
+            base.Save(filePath);
+        }
+
+
         internal void SetDefaultValuesAfterDeserialization(StreamingContext context)
         {
             if (this.DeviceGroups == null
@@ -38,14 +46,6 @@ namespace PsiCat.SmartDevices
             {
                 this.DeviceGroups = new Dictionary<string, SmartDeviceGroup>();
             }
-        }
-        
-        
-        public override void Save(string filePath = null)
-        {
-            if (filePath == null)
-                filePath = DefaultFilePath;
-            base.Save(filePath);
         }
     }
 }

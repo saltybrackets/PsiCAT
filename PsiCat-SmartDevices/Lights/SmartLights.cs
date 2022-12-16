@@ -164,7 +164,21 @@ namespace PsiCat.SmartDevices
             // Adapt Yeelights to ISmartLights
             foreach (YeelightDevice yeelight in yeelights)
             {
-                YeelightSmartLightAdapter adaptedYeelight = new YeelightSmartLightAdapter(yeelight);
+                SmartDevice smartDevice = this.Config.Devices
+                    .FirstOrDefault(device => device.IP == yeelight.Hostname);
+                if (smartDevice == null)
+                {
+                    smartDevice = new SmartDevice
+                                      {
+                                          IP = yeelight.Hostname,
+                                          Manufacturer = SmartDeviceManufacturer.Yeelight,
+                                          Name = yeelight.Name,
+                                          Type = SmartDeviceType.Light
+                                      };
+                }
+                    
+                YeelightSmartLightAdapter adaptedYeelight = 
+                    new YeelightSmartLightAdapter(yeelight, smartDevice);
                 smartLights.Add(adaptedYeelight);
             }
             

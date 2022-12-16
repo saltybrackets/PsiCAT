@@ -8,7 +8,9 @@
 
 <div>
     <span style="float: left; width: 200px; color: @(IsDisabled ? "#999" : "#000");">
-        @(SmartLight != null ? SmartLight.IP : "NULL")
+        @(SmartLight != null 
+              ? SmartLight.SmartDevice.Name
+              : "NULL")
     </span>
     
     <input type="color"
