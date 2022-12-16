@@ -7,7 +7,7 @@ using PsiCat.SmartDevices;
 public partial class LightGroup : ComponentBase 
 {
     [Parameter]
-    public KeyValuePair<string, List<SmartDevice>> LightGroupConfig { get; set; }
+    public SmartDeviceGroup LightGroupConfig { get; set; }
 
     public List<Light> Lights { get; set; } = new List<Light>();
 
@@ -29,14 +29,14 @@ public partial class LightGroup : ComponentBase
     }
 
 
-    public ISmartLight GetLight(SmartDevice smartDevice)
+    public ISmartLight GetLight(string deviceIP)
     {
-        if (smartDevice == null)
+        if (string.IsNullOrEmpty(deviceIP))
             return null;
         
-        return (!this.SmartLights.Lights.ContainsKey(smartDevice.IP) 
+        return (!this.SmartLights.Lights.ContainsKey(deviceIP) 
                     ? null 
-                    : this.SmartLights.Lights[smartDevice.IP]);
+                    : this.SmartLights.Lights[deviceIP]);
     }
 
 

@@ -4,7 +4,9 @@ namespace PsiCat.SmartDevices
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
+    using System.Runtime.Serialization;
 
 
     [Serializable]
@@ -15,12 +17,30 @@ namespace PsiCat.SmartDevices
 
         [DefaultValue(1000)]
         public int DeviceConnectionTimeout = 1000;
-        
+
         public List<SmartDevice> Devices = new List<SmartDevice>();
 
-        public Dictionary<string, List<SmartDevice>> SmartLightGroups = 
-            new Dictionary<string, List<SmartDevice>>();
+        public Dictionary<string, SmartDeviceGroup> DeviceGroups = new Dictionary<string, SmartDeviceGroup>();
 
+
+        public IEnumerable<SmartDeviceGroup> GetDeviceGroupsOfType(SmartDeviceType type)
+        {
+            return this.DeviceGroups
+                .Values
+                .Where(group => group.GroupType == type);
+        }
+
+
+        internal void SetDefaultValuesAfterDeserialization(StreamingContext context)
+        {
+            if (this.DeviceGroups == null
+                || !this.DeviceGroups.Any())
+            {
+                this.DeviceGroups = new Dictionary<string, SmartDeviceGroup>();
+            }
+        }
+        
+        
         public override void Save(string filePath = null)
         {
             if (filePath == null)

@@ -6,15 +6,15 @@
 
 <div>
     <div class="col-md-12 d-flex">
-        <h4>@LightGroupConfig.Key</h4>
+        <h4>@LightGroupConfig.Name</h4>
         <Light SmartLight="@SmartLightGroup" @ref="@GroupLightElement" />
     </div>
         
     <div>
         <ul>
-            @foreach (SmartDevice light in LightGroupConfig.Value)
+            @foreach (string ip in LightGroupConfig)
             {
-                <li><Light SmartLight="@GetLight(light)" @ref="@LightElement"/></li>
+                <li><Light SmartLight="@GetLight(ip)" @ref="@LightElement"/></li>
             }
         </ul>
     </div>

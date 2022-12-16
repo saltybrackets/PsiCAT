@@ -16,14 +16,14 @@
     <TabPage Label="All">
         <LightGroup LightGroupConfig="@GetAllLights()" @ref="@LightGroupElement" />
     </TabPage>
-    @foreach (KeyValuePair<string, List<SmartDevice>> entry in Config.SmartLightGroups)
+    @foreach (SmartDeviceGroup entry in Config.GetDeviceGroupsOfType(SmartDeviceType.Light))
     {
-        <TabPage Label="@entry.Key">
+        <TabPage Label="@entry.Name">
             <LightGroup LightGroupConfig="@entry" @ref="@LightGroupElement" />
         </TabPage>
     }
     <TabPage Label="+">
-        <h3>Create New Smart Light Device Group</h3>
+        <DeviceGroupEditor />
     </TabPage>
 </TabControl>
 

@@ -106,6 +106,7 @@ namespace PsiCat.Home
             // Authentication
             //webApplication.UseAuthentication();
             //webApplication.UseAuthorization();
+            webApplication.MapControllers();
         }
 
 
@@ -124,6 +125,9 @@ namespace PsiCat.Home
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             
+            // API Endpoints
+            builder.Services.AddControllers();
+
             // Authentication
             //AddAuthenticationService(builder);
         }

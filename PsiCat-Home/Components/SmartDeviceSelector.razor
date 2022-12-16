@@ -1,0 +1,12 @@
+@namespace PsiCat.Home
+
+@using PsiCat.SmartDevices
+@inject SmartDevicesPlugin SmartDevices
+
+<select @bind="@SelectedDeviceIP">
+    @foreach (SmartDevice smartDevice in this.smartDevices)
+    {
+        <option value="@smartDevice.IP">@smartDevice.Name</option>
+    }
+</select>    
+

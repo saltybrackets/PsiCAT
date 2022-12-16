@@ -80,15 +80,17 @@ public partial class Lights : ComponentBase
     }
 
 
-    private KeyValuePair<string, List<SmartDevice>> GetAllLights()
+    private SmartDeviceGroup GetAllLights()
     {
-        List<SmartDevice> lights = new List<SmartDevice>(); 
+        SmartDeviceGroup allLightsGroup = new SmartDeviceGroup();
+        allLightsGroup.Name = "All";
+        allLightsGroup.GroupType = SmartDeviceType.Light;
         foreach (SmartDevice light in this.Config.Devices
                      .Where(device => device.Type == SmartDeviceType.Light))
         {
-            lights.Add(light);
+            allLightsGroup.Add(light.IP);
         }
 
-        return new KeyValuePair<string, List<SmartDevice>>("All", lights);
+        return allLightsGroup;
     }
 }
